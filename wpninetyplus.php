@@ -40,15 +40,22 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
 // Get Helpers Files
-foreach ((new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator(
-    __DIR__ . '/apps',
-    FilesystemIterator::SKIP_DOTS) )) as $file ) {
-    if (
-        $file->isFile()
-        && $file->getExtension() === 'php'
-    ) {
-        require_once $file->getPathname();
+foreach (['config', 'apps'] as $directory) {
+	
+    $path = __DIR__ . '/' . $directory;
+
+    if (! is_dir($path)) {
+        continue;
+    }
+
+    foreach ((new RecursiveIteratorIterator(
+        	new RecursiveDirectoryIterator(
+            $path,
+            FilesystemIterator::SKIP_DOTS
+        ) )) as $file) {
+        if ($file->isFile() && $file->getExtension() === 'php') {
+            require_once $file->getPathname();
+        }
     }
 }
 
