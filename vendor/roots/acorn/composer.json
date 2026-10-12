@@ -1,0 +1,108 @@
+{
+  "name": "roots/acorn",
+  "license": "MIT",
+  "description": "Framework for Roots WordPress projects built with Laravel components.",
+  "homepage": "https://roots.io/acorn/",
+  "authors": [
+    {
+      "name": "QWp6t",
+      "email": "hi@qwp6t.me"
+    },
+    {
+      "name": "Brandon Nifong",
+      "email": "brandon@tendency.me"
+    }
+  ],
+  "keywords": [
+    "laravel",
+    "livewire",
+    "wordpress",
+    "sage"
+  ],
+  "bin": [
+    "bin/acorn"
+  ],
+  "support": {
+    "issues": "https://github.com/roots/acorn/issues",
+    "forum": "https://discourse.roots.io/"
+  },
+  "autoload": {
+    "psr-4": {
+      "Roots\\": "src/Roots/",
+      "Illuminate\\": "src/Illuminate/"
+    },
+    "files": [
+      "src/Roots/helpers.php",
+      "src/Roots/globals.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Roots\\Acorn\\Tests\\": "tests"
+    }
+  },
+  "require": {
+    "php": ">=8.3",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "dragonmantank/cron-expression": "^3.4",
+    "guzzlehttp/guzzle": "^7.8",
+    "illuminate/auth": "^13.0",
+    "illuminate/cache": "^13.0",
+    "illuminate/config": "^13.0",
+    "illuminate/console": "^13.0",
+    "illuminate/container": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "illuminate/cookie": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/encryption": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/filesystem": "^13.0",
+    "illuminate/hashing": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/log": "^13.0",
+    "illuminate/pagination": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "illuminate/testing": "^13.0",
+    "illuminate/validation": "^13.0",
+    "illuminate/view": "^13.0",
+    "laravel/prompts": "^0.3.0",
+    "laravel/serializable-closure": "^2.0",
+    "league/flysystem": "^3.26",
+    "ramsey/uuid": "^4.7",
+    "roots/support": "^1.0",
+    "symfony/error-handler": "^7.0 | ^8.0",
+    "symfony/var-dumper": "^7.0 | ^8.0",
+    "vlucas/phpdotenv": "^5.6"
+  },
+  "require-dev": {
+    "carthage-software/mago": "^1.29.0",
+    "mockery/mockery": "^1.6",
+    "pestphp/pest": "^4.0",
+    "phpcompatibility/php-compatibility": "^9.3",
+    "spatie/pest-plugin-snapshots": "^2.3",
+    "spatie/temporary-directory": "^2.2",
+    "tmarsteel/mockery-callable-mock": "^2.1",
+    "wp-cli/wp-cli": "^2.10"
+  },
+  "suggest": {
+    "roots/acorn-prettify": "A collection of modules to apply theme-agnostic front-end modifications (^1.0)."
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "scripts": {
+    "format": "mago format --check",
+    "format:fix": "mago format",
+    "lint": "mago lint",
+    "test": "pest",
+    "coverage": "XDEBUG_MODE=coverage pest --coverage --coverage-html=coverage"
+  }
+}

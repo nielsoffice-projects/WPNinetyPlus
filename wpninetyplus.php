@@ -30,12 +30,34 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-/**
- * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
- * Rename this for your plugin and update it as you release new versions.
- */
-define( 'WPNINETYPLUS_VERSION', '1.0.0' );
+require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
+
+/***
+ * WPNinetyPlus: Installed ENV
+ * This action is: env('APP_NAME', 'My Theme') 
+ **/
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
+
+// Get Helpers Files
+foreach ((new RecursiveIteratorIterator(
+    new RecursiveDirectoryIterator(
+    __DIR__ . '/apps',
+    FilesystemIterator::SKIP_DOTS) )) as $file ) {
+    if (
+        $file->isFile()
+        && $file->getExtension() === 'php'
+    ) {
+        require_once $file->getPathname();
+    }
+}
+
+// Safe Patch .ENV 
+add_action('after_setup_theme', function () {
+    if (class_exists(\Roots\Acorn\Application::class)) {
+        \Roots\Acorn\Application::configure()->boot();
+    }
+}, 0);
 
 /**
  * The code that runs during plugin activation.

@@ -1,0 +1,7 @@
+.php_cs.cache
+.phpunit.*
+phpunit.xml
+/composer.lock
+/coverage
+/scripts/.laravel-version
+/vendor

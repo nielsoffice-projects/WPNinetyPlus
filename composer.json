@@ -1,0 +1,22 @@
+{
+    "name": "nielsoffice/wpninetyplus",
+    "description": "WordPress Optimization 90+ Grade Speed Insight",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "WPNinetyPlus\\": "apps/"
+        }
+    },
+    "authors": [
+        {
+            "name": "nielsoffice",
+            "email": "buildproject@nielsoffice.com"
+        }
+    ],
+    "minimum-stability": "alpha",
+    "require": {
+        "php": ">=8.0",
+        "roots/acorn": "^6.3",
+        "vlucas/phpdotenv": "^5.7"
+    }
+}

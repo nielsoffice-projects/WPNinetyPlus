@@ -1,0 +1,310 @@
+<?php
+
+namespace Roots\Acorn\Application\Concerns;
+
+use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
+use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Throwable;
+use WP_CLI;
+
+trait Bootable
+{
+    /**
+     * The configuration used to boot the application.
+     */
+    protected array $bootConfiguration = [];
+
+    /**
+     * Boot the application and handle the request.
+     */
+    public function bootAcorn(array $bootConfiguration = []): static
+    {
+        if ($this->isBooted()) {
+            return $this;
+        }
+
+        $this->bootConfiguration = $bootConfiguration;
+
+        if (! defined('LARAVEL_START')) {
+            define('LARAVEL_START', microtime(true));
+        }
+
+        if ($this->runningInConsole()) {
+            $this->enableHttpsInConsole();
+
+            if (defined('WP_CLI') && WP_CLI) {
+                $this->bootWpCli();
+            } elseif (defined('USING_ACORN_CLI') && USING_ACORN_CLI) {
+                if (did_action('wp_loaded')) {
+                    $this->bootConsole();
+                } else {
+                    add_action('wp_loaded', fn () => $this->bootConsole(), PHP_INT_MAX);
+                }
+            }
+
+            return $this;
+        }
+
+        $this->bootHttp();
+
+        return $this;
+    }
+
+    /**
+     * Boot the Application for console.
+     */
+    protected function bootConsole(): void
+    {
+        $kernel = $this->make(ConsoleKernelContract::class);
+
+        $status = $kernel->handle($input = new ArgvInput(), new ConsoleOutput());
+
+        $kernel->terminate($input, $status);
+
+        exit($status);
+    }
+
+    /**
+     * Boot the Application for WP-CLI.
+     */
+    protected function bootWpCli(): void
+    {
+        $kernel = $this->make(ConsoleKernelContract::class);
+        $kernel->bootstrap();
+
+        WP_CLI::add_command('acorn', function ($args, $options) use ($kernel) {
+            $escaped = array_map(fn ($arg) => escapeshellarg($arg), $args);
+
+            $command = implode(' ', $escaped);
+
+            foreach ($options as $key => $value) {
+                if ($key === 'interaction' && $value === false) {
+                    $command .= ' --no-interaction';
+
+                    continue;
+                }
+
+                $command .= " --{$key}";
+
+                if ($value !== true) {
+                    $command .= '=' . escapeshellarg($value);
+                }
+            }
+
+            $command = str_replace('\\', '\\\\', $command);
+
+            $status = $kernel->handle($input = new StringInput($command), new ConsoleOutput());
+
+            $kernel->terminate($input, $status);
+
+            WP_CLI::halt($status);
+        });
+    }
+
+    /**
+     * Boot the Application for HTTP requests.
+     */
+    protected function bootHttp(): void
+    {
+        $kernel = $this->make(HttpKernelContract::class);
+
+        $originalGet = $_GET;
+        $originalPost = $_POST;
+        $originalCookie = $_COOKIE;
+        $originalServer = $_SERVER;
+        $originalRequest = $_REQUEST;
+
+        $_GET = stripslashes_deep($_GET);
+        $_POST = stripslashes_deep($_POST);
+        $_COOKIE = stripslashes_deep($_COOKIE);
+        $_SERVER = stripslashes_deep($_SERVER);
+        $_REQUEST = array_merge($_GET, $_POST);
+
+        $request = Request::capture();
+
+        $_GET = $originalGet;
+        $_POST = $originalPost;
+        $_COOKIE = $originalCookie;
+        $_SERVER = $originalServer;
+        $_REQUEST = $originalRequest;
+
+        $this->instance('request', $request);
+
+        Facade::clearResolvedInstance('request');
+
+        $kernel->bootstrap($request);
+
+        URL::forceRootUrl(home_url());
+
+        if ($this->app->handlesWordPressRequests()) {
+            $this->registerWordPressRoute(ob_get_level());
+        }
+
+        try {
+            $route = $this->make('router')->getRoutes()->match($request);
+
+            $this->registerRequestHandler($request, $route);
+        } catch (Throwable) {
+            //
+        }
+    }
+
+    /**
+     * Enable `$_SERVER[HTTPS]` in a console environment.
+     */
+    protected function enableHttpsInConsole(): void
+    {
+        $enable = apply_filters(
+            'acorn/enable_https_in_console',
+            parse_url(get_option('home'), PHP_URL_SCHEME) === 'https',
+        );
+
+        if ($enable) {
+            $_SERVER['HTTPS'] = 'on';
+        }
+    }
+
+    /**
+     * Register a default route for WordPress requests.
+     */
+    protected function registerWordPressRoute(int $initialObLevel): void
+    {
+        Route::any('{any?}', fn () => tap(response(''), function (Response $response) use ($initialObLevel) {
+            foreach (headers_list() as $header) {
+                [$header, $value] = preg_split("/:\s{0,1}/", $header, 2);
+
+                if (! headers_sent()) {
+                    header_remove($header);
+                }
+
+                $response->header($header, $value, $header !== 'Set-Cookie');
+            }
+
+            $response->setStatusCode(http_response_code());
+
+            $content = '';
+
+            $levels = ob_get_level();
+
+            for ($i = $initialObLevel; $i < $levels; $i++) {
+                $content .= ob_get_clean();
+            }
+
+            $response->setContent($content);
+        }))
+            ->middleware('wordpress')
+            ->where('any', '.*')
+            ->name('wordpress');
+    }
+
+    /**
+     * Register the request handler.
+     */
+    protected function registerRequestHandler(Request $request, ?\Illuminate\Routing\Route $route): void
+    {
+        $path = Str::finish($request->getBaseUrl(), $request->getPathInfo());
+
+        $except = collect([
+            admin_url(),
+            wp_login_url(),
+            wp_registration_url(),
+            rest_url(),
+        ])
+            ->map(fn ($url) => parse_url($url, PHP_URL_PATH))
+            ->unique()
+            ->filter();
+
+        if (Str::startsWith($path, $except->all()) || Str::endsWith($path, '.php')) {
+            return;
+        }
+
+        add_filter(
+            'do_parse_request',
+            function ($condition, $wp, $params) use ($route) {
+                if (! $route) {
+                    return $condition;
+                }
+
+                return apply_filters('acorn/router/do_parse_request', $condition, $wp, $params);
+            },
+            100,
+            3,
+        );
+
+        if ($route->getName() !== 'wordpress') {
+            add_action('parse_request', fn () => $this->handleRequest($request));
+
+            return;
+        }
+
+        if (! $this->app->handlesWordPressRequests() || redirect_canonical(null, false)) {
+            return;
+        }
+
+        ob_start();
+
+        remove_action('shutdown', 'wp_ob_end_flush_all', 1);
+
+        $kernel = $this->make(HttpKernelContract::class);
+
+        $response = $kernel->handle($request);
+
+        $response->headers->remove('cache-control');
+
+        add_action('send_headers', fn () => $response->setStatusCode(http_response_code())->sendHeaders(), 100);
+
+        add_action(
+            'shutdown',
+            function () use ($kernel, $request, $response) {
+                $response->sendContent();
+
+                if (function_exists('fastcgi_finish_request')) {
+                    fastcgi_finish_request();
+                } elseif (function_exists('litespeed_finish_request')) {
+                    litespeed_finish_request();
+                } elseif (! in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
+                    Response::closeOutputBuffers(0, true);
+                    flush();
+                }
+
+                $kernel->terminate($request, $response);
+
+                exit((int) $response->isServerError());
+            },
+            100,
+        );
+    }
+
+    /**
+     * Handle the request.
+     */
+    public function handleRequest(Request $request): void
+    {
+        $kernel = $this->make(HttpKernelContract::class);
+
+        $response = $kernel->handle($request);
+
+        $response->send();
+
+        $kernel->terminate($request, $response);
+
+        exit((int) $response->isServerError());
+    }
+
+    /**
+     * Retrieve the boot configuration.
+     */
+    public function getBootConfiguration(): array
+    {
+        return $this->bootConfiguration;
+    }
+}
