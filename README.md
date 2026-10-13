@@ -29,7 +29,6 @@ add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
  * Free Version 
  * */ 
 
-PRIVATE_SCRIPT_TAG = true
 OPTIMIZED_CLIENT_HTML = true
 OPTIMIZED_CLIENT_JAVASCRIPT = true 
 OPTIMIZED_CLIENT_CSS = true
