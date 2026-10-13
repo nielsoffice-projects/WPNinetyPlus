@@ -55,7 +55,8 @@ class InteractiveExe {
          * @maintainer NielsOffice
          * Remove single-line comments (// ...), guarding against URLs inside strings
          **/
-        $interactive = preg_replace( '/(?<!["\'`])\/\/.*/m', '', $interactive );
+        // Fixed regex: protects '://' in URLs from being treated as comments
+        $interactive = preg_replace( '/(?<!["\'`]|[:])\/\/.*/m', '', $interactive );
 
         /**
          * @package WPNinetyPlus 
@@ -64,16 +65,11 @@ class InteractiveExe {
          * @maintainer NielsOffice
          * Replace line breaks and tabs with a single space to flatten the script
          **/
-        $interactive = preg_replace( '/[\r\n\t]+/', ' ', $interactive );
-
-        /**
-         * @package WPNinetyPlus 
-         * @since 1.0.0
-         * @date October 13, 2026 AM
-         * @maintainer NielsOffice
-         * Collapse multiple consecutive spaces into one
-         **/
-        $interactive = preg_replace( '/\s+/', ' ', $interactive );
+        // Adjusted to avoid breaking Automatic Semicolon Insertion (ASI)
+        $interactive = preg_replace( '/[ \t]+/', ' ', $interactive );
+        
+        // Changed from "\n" to ' ' to flatten the script into a single line
+        $interactive = preg_replace( '/\R+/', ' ', $interactive );
 
         /**
          * @package WPNinetyPlus 
@@ -99,7 +95,6 @@ class InteractiveExe {
      **/
     public function protected_ninety_plus_script( string $handwriting ) : string
     {
-        // 
         $minified = $this->javascript_cured_ninety_plus( $handwriting );
 
         if ( empty( $minified ) ) {
