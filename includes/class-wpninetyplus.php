@@ -1,6 +1,7 @@
 <?php
 
  use WPNinetyPlus\Init;
+ use WPNinetyPlus\NinetyPlusCache;
 
 /**
  * The file that defines the core plugin class
@@ -82,7 +83,7 @@ class Wpninetyplus {
 		
 		// Initialize the plugin
 		new Init();
-
+		NinetyPlusCache::get_instance();
 
 	}
 
