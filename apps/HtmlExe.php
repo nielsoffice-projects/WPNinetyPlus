@@ -28,6 +28,14 @@ class HtmlExe {
      **/
     private bool $secure_js = PST;
 
+    private function get_ignore_assets() : array {
+        $default_ids = [
+            
+        ];
+
+        return apply_filters( 'wpninetyplus_cured_assets', $default_ids );
+    }
+
     public function __construct( ?bool $secure_js = null ) {
 
         if ( null !== $secure_js ) {
@@ -53,11 +61,19 @@ class HtmlExe {
             return $skeleton;
         }  
 
+        $ignore_ids = $this->get_ignore_assets();
+
         if ( OCC ) :
         $skeleton = preg_replace_callback( '/<style\b[^>]*>(.*?)<\/style>/is', function( $matches ) {
             preg_match( '/<style\b([^>]*)>/i', $matches[0], $attr_match );
             $attributes = isset( $attr_match[1] ) ? $attr_match[1] : '';
             
+            foreach ( $ignore_ids ?? [] as $id ) {
+                if ( preg_match( '/id=["\']' . preg_quote( $id, '/' ) . '["\']/i', $attributes ) ) {
+                    return $matches[0]; // Return unmodified tag
+                }
+            }
+
             return '<style' . $attributes . '>' . (new LayoutExe())->css_cured_ninety_plus( $matches[1] ) . '</style>';
             
         }, $skeleton );
@@ -73,6 +89,12 @@ class HtmlExe {
                 return $matches[0];
             }
 
+            foreach ( $ignore_ids ?? [] as $id ) {
+                if ( preg_match( '/id=["\']' . preg_quote( $id, '/' ) . '["\']/i', $attributes ) ) {
+                    return $matches[0]; // Return unmodified tag
+                }
+            }
+
             $js_cured = new InteractiveExe();
 
             if ( $this->secure_js ) {
@@ -86,10 +108,17 @@ class HtmlExe {
         }, $skeleton );
         endif;
 
-        $search = [
+       $search = [
+            // 1. Remove HTML comments (preserving IE conditional comments if any)
             '/<!--(?!\s*(?:\[if [^\]]>|<!|>))(?:(?!-->).)*-->/s', 
+            
+            // 2. Remove whitespace after closing tags '>'
             '/\>[^\S ]+/s',                                         
+            
+            // 3. Remove whitespace before opening tags '<'
             '/[^\S ]+\</s',                                        
+            
+            // 4. Collapse multiple consecutive whitespace/newlines into one
             '/(\s)+/s'                                              
         ];
         
@@ -101,6 +130,7 @@ class HtmlExe {
         ];
 
         return preg_replace( $search, $replace, $skeleton );
+
     }
 
 }

@@ -1,9 +1,9 @@
-# WPNinetyPlus
+# WPNinetyPlus WordPress Plugin/PHPLibrary
 WordPress Optimization 90+ Grade Speed Insight 
 
 
 ```PHP
-// Hook Add Style Merge  
+// Hook Add Style Merge  | theme directory functions.php
 
 add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
    
@@ -11,6 +11,14 @@ add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
     $stylesheets[] = 'three.css';
     
     return $stylesheets;
+});
+
+// Ignore Assets
+add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
+    
+    $ignore_ids[] = 'my-custom-script-id';
+    
+    return $ignore_ids;
 });
 
 ```
