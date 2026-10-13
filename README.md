@@ -1,4 +1,4 @@
-# WPNinetyPlus
+# WPNinetyPlus WordPress Plugin/PHPLibrary
 WordPress Optimization 90+ Grade Speed Insight 
 
 
