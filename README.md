@@ -38,8 +38,8 @@ OPTIMIZED_CLIENT_LMERGE = true
 
 
 <b>Thanks To:</b>
-<br>Github : To allow me to upload my PHP Library PHPWine Vanilla Flavour to repository
-<br>php.net : The opportunity to develop web applications using corePHP - PHPFrameworks
+<br>Github : To allow me to upload my WordPress Plugin.
+<br>php.net : The opportunity to develop using corePHP
 <br>WordPress : The opportunity to develop plugins using corePHP/WPCodex - Plugin/Library
 <br>
 <br>LICENSE BY GNU 3.0
