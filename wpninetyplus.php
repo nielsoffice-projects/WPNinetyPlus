@@ -26,7 +26,7 @@
  */
 
 // If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
+if ( ! defined( 'WPINC' ) || ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
@@ -40,7 +40,7 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
 // Get Helpers Files
-foreach (['config', 'apps'] as $directory) {
+foreach (['config', 'helpers'] as $directory) {
 	
     $path = __DIR__ . '/' . $directory;
 

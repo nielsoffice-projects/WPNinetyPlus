@@ -31,6 +31,7 @@ class Wpninetyplus_Activator {
 	 */
 	public static function activate() {
 
+
 	}
 
 }

@@ -1,5 +1,7 @@
 <?php
 
+ use WPNinetyPlus\Init;
+
 /**
  * The file that defines the core plugin class
  *
@@ -77,6 +79,9 @@ class Wpninetyplus {
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
+		
+		// Initialize the plugin
+		new Init();
 
 
 	}
