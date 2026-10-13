@@ -214,7 +214,7 @@ class NinetyPlusCache {
                             notice.remove();
                         }, 800);
                     }
-                }, 2000); // Wait 2 seconds before starting fade
+                }, 2000); 
             });
         </script>
         <?php
