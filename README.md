@@ -3,7 +3,7 @@ WordPress Optimization 90+ Grade Speed Insight
 
 
 ```PHP
-// Hook Add Style Merge  
+// Hook Add Style Merge  | theme directory functions.php
 
 add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
    
