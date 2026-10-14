@@ -2,8 +2,14 @@
 WordPress Optimization 90+ Grade Speed Insight 
 
 ```HTML
+
+<!-- CSS -->
 <link rel="preload" href="heavy-styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="heavy-styles.css"></noscript>
+
+<!-- JS --> 
+<script src="your-script.js" defer></script>
+
 ```
 ```PHP
 // Hook Add Style Merge  | theme directory functions.php
