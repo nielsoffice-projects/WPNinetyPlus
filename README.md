@@ -1,7 +1,10 @@
 # WPNinetyPlus WordPress Plugin/PHPLibrary
 WordPress Optimization 90+ Grade Speed Insight 
 
-
+```HTML
+<link rel="preload" href="heavy-styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="heavy-styles.css"></noscript>
+```
 ```PHP
 // Hook Add Style Merge  | theme directory functions.php
 
