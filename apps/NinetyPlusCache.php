@@ -331,10 +331,9 @@ final class NinetyPlusCache {
         }
 
         // Render via Acorn Blade view safely
-        if ( function_exists( '\\Roots\\view' ) ) {
-            echo \Roots\view( 'partials.cache-notice', compact( 'results' ) )->render();
-        } elseif ( function_exists( 'view' ) ) {
-            echo view( 'partials.cache-notice', compact( 'results' ) )->render();
-        }
+        echo \Roots\view(
+            'wpninetyplus::partials.cache-notice',
+            compact( 'results' )
+        )->render();
     }
 }

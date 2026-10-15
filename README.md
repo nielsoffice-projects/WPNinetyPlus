@@ -69,4 +69,3 @@ WPNINETYPLUS_ISOLATE = true
 <br>Become a donor, Because with you! We can build more...
 <br><b>GCash</b> : +639650332900
 <br><b>Paypal account</b>: syncdevprojects@gmail.com
-
