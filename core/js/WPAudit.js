@@ -1,4 +1,5 @@
 import { WPNinetyPlusGetImages } from './WPNinetyPlusGM.js';
+import { WPNinetyPlusGetVideos } from './WPNinetyPlusGV.js';
 import { WPNinetyPlusAssetsPaint } from './WPNinetyPlusAP.js';
 import { WPNinetyPlusAssetsInteractive } from './WPNinetyPlusAI.js';
 import { WPNinetyPlusAsstesLayout } from './WPNinetyPlusAL.js';
@@ -503,6 +504,7 @@ window.WPNinetyPlus = async function () {
     // Trigger sub-audits
     WPNinetyPlusMetaData();
     WPNinetyPlusGetImages();
+    WPNinetyPlusGetVideos();
     WPNinetyPlusAssetsPaint();
     WPNinetyPlusAssetsInteractive();
     WPNinetyPlusAsstesLayout();
@@ -518,6 +520,7 @@ window.WPNinetyPlus = async function () {
 };
 
 window.WPNinetyPlusGetImages = WPNinetyPlusGetImages;
+window.WPNinetyPlusGetVideos = WPNinetyPlusGetVideos;
 window.WPNinetyPlusAssetsPaint = WPNinetyPlusAssetsPaint;
 window.WPNinetyPlusAssetsInteractive = WPNinetyPlusAssetsInteractive;
 window.WPNinetyPlusAsstesLayout = WPNinetyPlusAsstesLayout;
