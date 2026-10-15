@@ -7,6 +7,12 @@
 define( 'WPNINETYPLUS_VERSION', '1.0.0' );
 
 /**
+ * @since Oct 115, 2026
+ * WPNinetyPlus Style CSS Merge in client side
+ */
+define('WPNPI', env('WPNINETYPLUS_ISOLATE') === true ? false : true );
+
+/**
  * @since Oct 13, 2026
  * Protect JS Script in client side
  */

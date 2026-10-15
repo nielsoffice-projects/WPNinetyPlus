@@ -70,6 +70,7 @@ class Wpninetyplus {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
+		
 		if ( defined( 'WPNINETYPLUS_VERSION' ) ) {
 			$this->version = WPNINETYPLUS_VERSION;
 		} else {
@@ -80,7 +81,7 @@ class Wpninetyplus {
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
-		
+		$this->define_hooks_public();		
 		// Initialize the plugin
 		new Init();
 		NinetyPlusCache::get_instance();
@@ -156,6 +157,15 @@ class Wpninetyplus {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+
+	}
+
+	private function define_hooks_public() {
+
+		$plugin_public = new Wpninetyplus_Admin( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles_public' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts_public' );
 
 	}
 

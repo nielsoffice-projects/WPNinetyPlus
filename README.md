@@ -1,7 +1,16 @@
-# WPNinetyPlus WordPress Plugin/PHPLibrary
+# WPNinetyPlus (WP Plugin/PHPLibrary)
 WordPress Optimization 90+ Grade Speed Insight 
 
+```HTML
 
+<!-- CSS -->
+<link rel="preload" href="heavy-styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="heavy-styles.css"></noscript>
+
+<!-- JS --> 
+<script src="your-script.js" defer></script>
+
+```
 ```PHP
 // Hook Add Style Merge  | theme directory functions.php
 
@@ -28,13 +37,23 @@ add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
  * .env | plugin directory 
  * Free Version 
  * */ 
-
 OPTIMIZED_CLIENT_HTML = true
 OPTIMIZED_CLIENT_JAVASCRIPT = true 
 OPTIMIZED_CLIENT_CSS = true
 OPTIMIZED_CLIENT_LMERGE = true
 
+WPNINETYPLUS_ISOLATE = true 
+
 ```
+
+| Function | Description | Focus Area |
+| :--- | :--- | :--- |
+| **`WPNinetyPlus()`** | Executes a comprehensive, full-site performance audit to identify bottlenecks and elevate overall Core Web Vitals. | Full Website Audit |
+| **`WPNinetyPlusAssetsInteractive()`** | Deep-dives into JavaScript execution, script loading behavior, and interactivity bottlenecks to minimize Total Blocking Time (TBT). | JavaScript Optimization |
+| **`WPNinetyPlusAsstesLayout()`** | Analyzes CSS delivery, uncovers render-blocking stylesheets, and optimizes layout shifts for smoother rendering. | CSS & Layout Performance |
+| **`WPNinetyPlusAssetsPaint()`** | Audits typography delivery, web fonts, and favicons to ensure fast First Contentful Paint (FCP) and prevent flash of unstyled text. | Fonts & Visual Elements |
+| **`WPNinetyPlusGetImages()`** | Catalogs and analyzes all image assets, verifying next-gen format usage, proper sizing, and lazy-loading implementation. | Image Optimization |
+| **`WPNinetyPlusMetaData()`** | Scans and validates meta tags, Open Graph data, and technical SEO markers to ensure search engine readiness and social share efficiency. | SEO & Metadata |
 
 
 <b>Thanks To:</b>
