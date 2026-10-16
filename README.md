@@ -10,6 +10,13 @@ WordPress Optimization 90+ Grade Speed Insight
 <!-- JS --> 
 <script src="your-script.js" defer></script>
 
+// IF using Manger | safe header <head>
+
+style.css
+
+<style id="layout"> body,html { background-color: red !important; } </style>
+<script id="interactive"> console.log('Im safe in header') </script>
+
 ```
 
 ```PHP
