@@ -162,14 +162,18 @@ public function enqueue_scripts_public() {
 
         else :
             
-            // Register the script with $in_footer = true so it prints at the bottom of the footer
-            $script_src = plugin_dir_url( __FILE__ ) . 'js/init.js';
-            wp_register_script( $handle, $script_src, array(), $this->version, true );
-            wp_enqueue_script( $handle );
+			$wpnpd_enabled = defined('WPNPD') && WPNPD;
+			
+			if($wpnpd_enabled) : 
+				// Register the script with $in_footer = true so it prints at the bottom of the footer
+				$script_src = plugin_dir_url( __FILE__ ) . 'js/init.js';
+				wp_register_script( $handle, $script_src, array(), $this->version, true );
+				wp_enqueue_script( $handle );
 
-            // Use a custom inline script block printed right after to handle the 6-second delay post-page load
-            $inline_js = "window.addEventListener('load',function(){setTimeout(function(){var s=document.createElement('script');s.src='" . esc_url_raw( $script_src ) . "';s.id='" . esc_attr( $handle . '-js' ) . "';document.body.appendChild(s);},6000);});";
-            wp_add_inline_script( $handle, $inline_js, 'after' );
+				// Use a custom inline script block printed right after to handle the 6-second delay post-page load
+				$inline_js = "window.addEventListener('load',function(){setTimeout(function(){var s=document.createElement('script');s.src='" . esc_url_raw( $script_src ) . "';s.id='" . esc_attr( $handle . '-js' ) . "';document.body.appendChild(s);},6000);});";
+				wp_add_inline_script( $handle, $inline_js, 'after' );
+			endif;
 
         endif;
 

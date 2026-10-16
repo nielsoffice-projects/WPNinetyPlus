@@ -11,6 +11,7 @@ WordPress Optimization 90+ Grade Speed Insight
 <script src="your-script.js" defer></script>
 
 ```
+
 ```PHP
 // Hook Add Style Merge  | theme directory functions.php
 
@@ -37,12 +38,18 @@ add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
  * .env | plugin directory 
  * Free Version 
  * */ 
+
+WPNINETYPLUS_INJECTASSETS = true 
+WPNINETYPLUS_SYNCASSETS = true
+
+WPNINETYPLUS_ISOLATE = true
+WPNINETYPLUS_INIT = false
+
 OPTIMIZED_CLIENT_HTML = true
 OPTIMIZED_CLIENT_JAVASCRIPT = true 
 OPTIMIZED_CLIENT_CSS = true
 OPTIMIZED_CLIENT_LMERGE = true
 
-WPNINETYPLUS_ISOLATE = true 
 
 ```
 
@@ -55,6 +62,55 @@ WPNINETYPLUS_ISOLATE = true
 | **`WPNinetyPlusGetImages()`** | Catalogs and analyzes all image assets, verifying next-gen format usage, proper sizing, and lazy-loading implementation. | Image Optimization |
 | **`WPNinetyPlusGetVideos()`** | Scans, inspects, and audits embedded and hosted video content, reviewing compression, streaming efficiency, and lazy-loading policies to eliminate bandwidth bloat. | Video & Media Optimization |
 | **`WPNinetyPlusMetaData()`** | Scans and validates meta tags, Open Graph data, and technical SEO markers to ensure search engine readiness and social share efficiency. | SEO & Metadata |
+
+```PHP
+Hooks/Filters: 
+
+
+/**
+ * 1. Define Keywords / Assets to Delay
+ */
+add_filter( 'wpninetyplus_sync_assets', function( $keywords ) {
+    return array(
+        // Add your target asset paths or strings here
+    );
+});
+
+add_filter( 'wpninetyplus_loading_period', function( $default_expression ) {
+   return $preload_block;
+});
+
+/**
+ * 2. Define Font Preloads
+ */
+add_filter( 'wpninetyplus_sync_font_preloads', function( $preload_block, $theme_uri ) {
+    return $preload_block;
+}, 10, 2 );
+
+/**
+ * 3. Define Dynamic Loading Timeout Period Logic
+ */
+add_filter( 'wpninetyplus_sync_loading_period', function( $js_string ) {
+    return 'var loadingPeriod = window.innerWidth <= 680 ? 2000 : (window.innerWidth <= 2014 ? 2500 : 2000);';
+});
+
+/**
+ * 4. Define Conditional Page Assets, Styles, and Scripts
+ */
+add_filter( 'wpninetyplus_sync_assets_conditional', function( $block, $theme_uri, $version ) {
+    return $block;
+}, 10, 3 );
+
+/**
+ * 5. Define Selectors to Remove .r-temporary Class From
+ */
+add_filter( 'wpninetyplus_sync_temporary', function( $selectors ) {
+    return array(
+        // Add selectors here, e.g., '.content-blocks .content-blocks__item'
+    );
+});
+
+```
 
 
 <b>Thanks To:</b>

@@ -1,0 +1,44 @@
+ /* Keyframe Animations */
+    @keyframes fadeInSection {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeFromBottom {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeFromTop {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Animation Class Application */
+    .wpnsection {
+        animation: fadeInSection 1s ease-out forwards;
+    }
+
+    .raw-first-from-bottom {
+        animation: fadeFromBottom 1s ease-out forwards;
+    }
+
+    .raw-second-from-top {
+        animation: fadeFromTop 1s ease-out forwards;
+    }

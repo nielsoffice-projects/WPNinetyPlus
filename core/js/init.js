@@ -19,6 +19,10 @@
     }
 })();
 
+window.WPNinetyPlus = function () {
+    console.log("Contact Administrator to enable");
+};
+
 window.WPNinetyPlusGetImages = function () {
     console.log("Contact Administrator to enable");
 };

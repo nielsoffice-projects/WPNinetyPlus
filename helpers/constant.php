@@ -5,9 +5,27 @@
  * Rename this for your plugin and update it as you release new versions.
  */
 define( 'WPNINETYPLUS_VERSION', '1.0.0' );
+/**
+ * @since Oct 16, 2026
+ * WPNinetyPlus Style CSS Merge in client side
+ */
+define('WNPIA', env('WPNINETYPLUS_INJECTASSETS') === true ? false : true );
 
 /**
- * @since Oct 115, 2026
+ * @since Oct 16, 2026
+ * WPNinetyPlus Style CSS Merge in client side
+ */
+define('WPNSA', env('WPNINETYPLUS_SYNCASSETS') === true ? false : true );
+
+/**
+ * @since Oct 16, 2026
+ * WPNinetyPlus Style CSS Merge in client side
+ */
+define('WPNPD', env('WPNINETYPLUS_INIT') === true ? false : true );
+
+
+/**
+ * @since Oct 15, 2026
  * WPNinetyPlus Style CSS Merge in client side
  */
 define('WPNPI', env('WPNINETYPLUS_ISOLATE') === true ? false : true );
