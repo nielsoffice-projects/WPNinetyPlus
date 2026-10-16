@@ -9,7 +9,7 @@ define( 'WPNINETYPLUS_VERSION', '1.0.0' );
  * @since Oct 16, 2026
  * WPNinetyPlus Style CSS Merge in client side
  */
-define('WNPIA', env('WPNINETYPLUS_INJECTASSETS') === true ? false : true );
+define('WNPIA', env('WPNINETYPLUS_MANAGER') === true ? false : true );
 
 /**
  * @since Oct 16, 2026

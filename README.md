@@ -39,7 +39,7 @@ add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
  * Free Version 
  * */ 
 
-WPNINETYPLUS_INJECTASSETS = true 
+WPNINETYPLUS_MANAGER = true 
 WPNINETYPLUS_SYNCASSETS = true
 
 WPNINETYPLUS_ISOLATE = true
@@ -76,9 +76,6 @@ add_filter( 'wpninetyplus_sync_assets', function( $keywords ) {
     );
 });
 
-add_filter( 'wpninetyplus_loading_period', function( $default_expression ) {
-   return $preload_block;
-});
 
 /**
  * 2. Define Font Preloads
@@ -90,6 +87,10 @@ add_filter( 'wpninetyplus_sync_font_preloads', function( $preload_block, $theme_
 /**
  * 3. Define Dynamic Loading Timeout Period Logic
  */
+add_filter( 'wpninetyplus_loading_period', function( $default_expression ) {
+   return $preload_block;
+});
+
 add_filter( 'wpninetyplus_sync_loading_period', function( $js_string ) {
     return 'var loadingPeriod = window.innerWidth <= 680 ? 2000 : (window.innerWidth <= 2014 ? 2500 : 2000);';
 });
