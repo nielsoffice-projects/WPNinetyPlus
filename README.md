@@ -14,7 +14,7 @@ WordPress Optimization 90+ Grade Speed Insight
 
 style.css
 
-<style id="layout"> .homepage{ background-color: red !important; } </style>
+<style id="layout"> homepage, or_merge { background-color: red !important; } </style>
 <script id="interactive"> document.addEventListener("DOMContentLoaded", () => { console.log('Im safe in header') });</script>
 
 ```
