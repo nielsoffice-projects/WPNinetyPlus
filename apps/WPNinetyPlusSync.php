@@ -155,7 +155,6 @@ class WPNinetyPlusSync {
         $assets_block .= '});';
         $assets_block .= '</script>';
 
-        // --- 5. INJECT BEFORE </body> ---
         if ( false !== strpos( $html, '</body>' ) ) {
             $html = str_replace( '</body>', $assets_block . "\n</body>", $html );
         } else {
