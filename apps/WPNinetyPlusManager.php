@@ -127,14 +127,11 @@ class WPNinetyPlusManager {
 
         $optimized_block .= "</div>\n";
 
-        // --- FETCH LOADING PERIOD VALUE VIA WORDPRESS FILTER HOOK ---
         $default_loading_js = "window.innerWidth <= 680 ? 4000 : (window.innerWidth <= 2014 ? 3500 : 2500)";
         $loading_period_expression = apply_filters( 'wpninetyplus_loading_period', $default_loading_js );
 
-        // --- TIMER ACTIVATION SCRIPT WITH HOOK INTEGRATION ---
         $optimized_block .= "<script>!function(a){setTimeout(function(){document.querySelectorAll('#wpninetyplus-delayed-assets link[data-delayed-href]').forEach(function(b){var c=document.createElement('link');c.rel='stylesheet';c.href=b.getAttribute('data-delayed-href');document.head.appendChild(c)});document.querySelectorAll('#wpninetyplus-delayed-assets script[data-delayed-src]').forEach(function(b){var c=document.createElement('script');c.src=b.getAttribute('data-delayed-src');c.defer=true;document.body.appendChild(c)});document.querySelectorAll('script.delayed-js-block').forEach(function(b){var c=document.createElement('script');c.text=b.textContent;document.body.appendChild(c)});document.querySelectorAll('style.delayed-style').forEach(function(b){document.head.appendChild(b)});var d=document.getElementById('wpninetyplus-delayed-assets');if(d)d.remove()},a)}( " . $loading_period_expression . " );</script>\n";
 
-        // --- COLLAPSE WHITESPACE & INJECT BEFORE </body> ---
         $html = preg_replace( "/[\r\n]{3,}/", "\n\n", $html );
 
         if ( false !== strpos( $html, '</body>' ) ) {
