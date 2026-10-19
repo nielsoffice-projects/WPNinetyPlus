@@ -194,7 +194,7 @@ class FullPaintExe {
         }, $skeleton );
 
         // 2. Process Child Elements: h1, h2, img, nav, p, div, ul, ol, a, figure, table, caption, thead, tbody, tfoot, tr
-        $child_tags = '(h1|h2|img|video|iframe|nav|p|div|ul|ol|a|figure|table|caption|thead|tbody|tfoot|tr)';
+        $child_tags = '(h1|h2|img|video|iframe|nav|p|ul|ol|a|figure|table|caption|thead|tbody|tfoot|tr)';
         $skeleton = preg_replace_callback( '/<' . $child_tags . '\b([^>]*)>/i', function( $matches ) {
             $tag_name   = $matches[1];
             $attributes = $matches[2];
