@@ -60,4 +60,8 @@ define('OCC', env('OPTIMIZED_CLIENT_CSS') === true ? false : true );
  */
 define('OCLM', env('OPTIMIZED_CLIENT_LMERGE') === true ? false : true );
 
-
+/**
+ * @since Oct 19, 2026
+ * WPNinetyPlus Style CSS Merge in client side
+ */
+define('WPNPFP', env('WPNINETYPLUS_FULLPAINT') === true ? false : true );

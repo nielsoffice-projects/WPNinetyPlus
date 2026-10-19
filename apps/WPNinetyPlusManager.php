@@ -1,7 +1,8 @@
 <?php 
 
-
 namespace WPNinetyPlus;
+
+use WPNinetyPlus\WPNinetyPlusExtractor;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit; 
@@ -9,131 +10,120 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Plugin Name: WP Ninety Plus Asset Optimizer
- * Description: Automatically strips non-critical head assets and moves them to the footer.
- * Version: 1.0.0
+ * Description: Automatically strips non-critical head assets, defers them, and supports optimized preload/noscript patterns.
+ * Version: 1.0.3
  */
-
 
 class WPNinetyPlusManager {
 
+    /**
+     * Main execution pipeline method to process, wrap, and inject optimized assets into the DOM.
+     *
+     * @since 1.0.3
+     * @param string $html The raw HTML output buffer content.
+     * @return string      The fully optimized HTML buffer ready for browser delivery.
+     */
     public function cured_assets_injection( $html ) {
-        // Skip optimization in admin panels or feeds
+        // Bypass optimization routines entirely if processing administrative screens, RSS feeds, or trackbacks.
         if ( is_admin() || is_feed() || is_trackback() ) {
             return $html;
         }
 
-        $delayed_css           = array();
-        $extracted_inline_css  = array();
-        $delayed_js            = array();
-        $extracted_inline_js   = array();
-        $extracted_preloads    = array();
+        // Delegate parsing tasks to the asset extractor engine.
+        $extractor = new WPNinetyPlusExtractor();
+        $assets    = $extractor->extract_assets( $html );
 
-        // 1. Grab stylesheet URLs (Except critical 'style.css')
-        $pattern_css = '/<link\b[^>]*rel\s*=\s*(["\'])stylesheet\1[^>]*href\s*=\s*(["\'])([^"\']+)\2[^>]*>/i';
-        if ( preg_match_all( $pattern_css, $html, $matches_css ) ) {
-            foreach ( $matches_css[0] as $index => $full_tag ) {
-                $css_url = $matches_css[3][$index];
-                $css_basename = basename( parse_url( $css_url, PHP_URL_PATH ) );
-                if ( 'style.css' !== $css_basename ) {
-                    $delayed_css[] = $css_url;
-                    $html = str_replace( $full_tag, '', $html );
-                }
-            }
-        }
-
-        // 2. Grab all preloads and preconnects
-        $pattern_preload = '/<link\b[^>]*rel\s*=\s*(["\'])(preload|preconnect)\1[^>]*>/i';
-        if ( preg_match_all( $pattern_preload, $html, $matches_preload ) ) {
-            foreach ( $matches_preload[0] as $tag ) {
-                $extracted_preloads[] = $tag;
-                $html = str_replace( $tag, '', $html );
-            }
-        }
-
-        // 3. Grab inline <style> blocks (Except critical id="layout")
-        $pattern_style = '/<style\b[^>]*>([\s\S]*?)<\/style>/i';
-        if ( preg_match_all( $pattern_style, $html, $matches_style ) ) {
-            foreach ( $matches_style[0] as $index => $full_tag ) {
-                $style_content = $matches_style[1][$index];
-                if ( false === strpos( $full_tag, 'id="layout"' ) && false === strpos( $full_tag, "id='layout'" ) ) {
-                    $clean_css = trim( preg_replace( '/<!--[\s\S]*?-->/', '', $style_content ) );
-                    $extracted_inline_css[] = "<style class=\"delayed-style\">\n    " . trim( $clean_css ) . "\n</style>";
-                    $html = str_replace( $full_tag, '', $html );
-                }
-            }
-        }
-
-        // 4. FLEXIBLE: Grab external script URLs (Except critical 'vanilla.js')
-        $pattern_script = '/<script\b[^>]*\bsrc\s*=\s*(["\'])([^"\']+)\1[^>]*>[\s\S]*?<\/script>/i';
-        if ( preg_match_all( $pattern_script, $html, $matches_script ) ) {
-            foreach ( $matches_script[0] as $index => $full_tag ) {
-                $js_url = $matches_script[2][$index];
-                $js_basename = basename( parse_url( $js_url, PHP_URL_PATH ) );
-
-                var_dump($js_basename);
-
-                if ( 'vanilla.js' !== $js_basename ) {
-                    $delayed_js[] = $js_url;
-                    $html = str_replace( $full_tag, '', $html );
-                }
-            }
-        }
-
-        // 5. Grab inline script blocks (Except critical id="interactive")
-        $pattern_inline_js = '/<script\b[^>]*>(?![\s\S]*src=)([\s\S]*?)<\/script>/i';
-        if ( preg_match_all( $pattern_inline_js, $html, $matches_inline_js ) ) {
-            foreach ( $matches_inline_js[0] as $index => $full_tag ) {
-                $js_content = $matches_inline_js[1][$index];
-                if ( false === strpos( $full_tag, 'id="interactive"' ) && false === strpos( $full_tag, "id='interactive'" ) ) {
-                    $clean_js = trim( preg_replace( '/<!--[\s\S]*?-->/', '', $js_content ) );
-                    $extracted_inline_js[] = "<script type=\"text/plain\" class=\"delayed-js-block\">\n    " . trim( $clean_js ) . "\n</script>";
-                    $html = str_replace( $full_tag, '', $html );
-                }
-            }
-        }
-
-
-        // --- BUILD THE OPTIMIZED FOOTER BLOCK WITH FILTERED DELAY ---
+        // Initialize the hidden wrapper container block designated for deferred asset restoration.
         $optimized_block  = "\n<!-- WPNinetyPlus Execution -->\n";
-        $optimized_block .= "<div id=\"wpninetyplus-delayed-assets\" style=\"display:none;\">\n";
+        $optimized_block .= "<div id=\"wpninetyplus-wpninetypluscured-assets\" style=\"display:none;\">\n";
 
-        // A. External CSS URLs
-        if ( ! empty( $delayed_css ) ) {
-            foreach ( $delayed_css as $css_url ) {
-                $optimized_block .= '<link rel="stylesheet" data-delayed-href="' . esc_url( $css_url ) . '">' . "\n";
+        // A. Convert extracted external CSS stylesheets into asynchronous preload links with fallback noscript declarations.
+        if ( ! empty( $assets['css'] ) ) {
+            foreach ( $assets['css'] as $css_tag ) {
+                if ( preg_match( '/href\s*=\s*(["\'])([^"\']+)\1/i', $css_tag, $url_match ) ) {
+                    $href_val     = $url_match[2];
+                    $preload_tag  = sprintf(
+                        '<link rel="preload" href="%s" as="style" onload="this.onload=null;this.rel=\'stylesheet\'" data-wpninetypluscured-href="%s">',
+                        esc_url( $href_val ),
+                        esc_url( $href_val )
+                    );
+                    $noscript_tag = sprintf( '<noscript><link rel="stylesheet" href="%s"></noscript>', esc_url( $href_val ) );
+
+                    $optimized_block .= $preload_tag . "\n" . $noscript_tag . "\n";
+                } else {
+                    $modified_tag     = preg_replace( '/\bhref\s*=\s*(["\'])/i', 'data-wpninetypluscured-href=$1', $css_tag );
+                    $optimized_block .= $modified_tag . "\n";
+                }
             }
         }
 
-        if ( ! empty( $extracted_preloads ) ) {
-            $optimized_block .= implode( "\n", $extracted_preloads ) . "\n";
+        // Append collected link preloads and preconnect resource declarations.
+        if ( ! empty( $assets['preloads'] ) ) {
+            $optimized_block .= implode( "\n", $assets['preloads'] ) . "\n";
         }
 
-        // B. Inline CSS Follows External CSS
-        if ( ! empty( $extracted_inline_css ) ) {
-            $optimized_block .= implode( "\n", $extracted_inline_css ) . "\n";
-        }
-
-        // C. External JS URLs
-        if ( ! empty( $delayed_js ) ) {
-            foreach ( $delayed_js as $js_url ) {
-                $optimized_block .= '<script data-delayed-src="' . esc_url( $js_url ) . '" defer></script>' . "\n";
+        // B. Reinsert extracted inline CSS style blocks into the deferred storage block.
+        if ( ! empty( $assets['inline_css'] ) ) {
+            foreach ( $assets['inline_css'] as $style_tag ) {
+                $optimized_block .= $style_tag . "\n";
             }
         }
 
-        // D. Inline JS Follows External JS
-        if ( ! empty( $extracted_inline_js ) ) {
-            $optimized_block .= implode( "\n", $extracted_inline_js ) . "\n";
+        // C. Process external script tags by injecting data attributes and enforcing 'defer' execution rules.
+        if ( ! empty( $assets['js'] ) ) {
+            foreach ( $assets['js'] as $js_tag ) {
+                $modified_tag = preg_replace( '/\bsrc\s*=\s*(["\'])/i', 'data-wpninetypluscured-src=$1', $js_tag );
+                if ( false === strpos( $modified_tag, 'defer' ) ) {
+                    $modified_tag = str_replace( '<script', '<script defer', $modified_tag );
+                }
+                $optimized_block .= $modified_tag . "\n";
+            }
+        }
+
+        // D. Convert inline script block mime types to text/plain to prevent premature parsing by the browser.
+        if ( ! empty( $assets['inline_js'] ) ) {
+            foreach ( $assets['inline_js'] as $js_tag ) {
+                $modified_tag = preg_replace( '/\btype\s*=\s*(["\'])text\/javascript\1/i', 'type="text/plain"', $js_tag );
+                if ( false === strpos( $modified_tag, 'type=' ) ) {
+                    $modified_tag = str_replace( '<script', '<script type="text/plain"', $modified_tag );
+                }
+                $optimized_block .= $modified_tag . "\n";
+            }
         }
 
         $optimized_block .= "</div>\n";
 
-        $default_loading_js = "window.innerWidth <= 680 ? 4000 : (window.innerWidth <= 2014 ? 3500 : 2500)";
+        /**
+         * Filter the deferred activation loading period expression.
+         * Dynamically adjusts timing based on screen width dimensions (e.g., mobile vs. desktop).
+         *
+         * @since 1.0.3
+         * @param string $default_loading_js JavaScript ternary layout calculating delay milliseconds.
+         */
+        $default_loading_js        = "window.innerWidth <= 680 ? 4000 : (window.innerWidth <= 2014 ? 3500 : 2500)";
         $loading_period_expression = apply_filters( 'wpninetyplus_loading_period', $default_loading_js );
 
-        $optimized_block .= "<script>!function(a){setTimeout(function(){document.querySelectorAll('#wpninetyplus-delayed-assets link[data-delayed-href]').forEach(function(b){var c=document.createElement('link');c.rel='stylesheet';c.href=b.getAttribute('data-delayed-href');document.head.appendChild(c)});document.querySelectorAll('#wpninetyplus-delayed-assets script[data-delayed-src]').forEach(function(b){var c=document.createElement('script');c.src=b.getAttribute('data-delayed-src');c.defer=true;document.body.appendChild(c)});document.querySelectorAll('script.delayed-js-block').forEach(function(b){var c=document.createElement('script');c.text=b.textContent;document.body.appendChild(c)});document.querySelectorAll('style.delayed-style').forEach(function(b){document.head.appendChild(b)});var d=document.getElementById('wpninetyplus-delayed-assets');if(d)d.remove()},a)}( " . $loading_period_expression . " );</script>\n";
+        /**
+         * Filter temporary layout classes or element selectors to be cleaned up after execution.
+         *
+         * @since 1.0.3
+         * @param array $selectors Array of CSS selector strings.
+         */
+        $selectors_to_clean        = apply_filters( 'wpninetyplus_temporary', array() );
+        $selectors_js              = ! empty( $selectors_to_clean ) ? json_encode( $selectors_to_clean ) : '[]';
 
+        /**
+         * Construct the client-side vanilla JavaScript timer activation script.
+         * This script waits for the calculated delay period, dynamically unpacks all deferred 
+         * styles, scripts, and preloads from the hidden container, appends them to the live DOM, 
+         * strips temporary placeholder CSS classes, and safely destroys the container node.
+         */
+        $optimized_block          .= "<script>!function(a,e){setTimeout(function(){document.querySelectorAll('#wpninetyplus-wpninetypluscured-assets link[data-wpninetypluscured-href]').forEach(function(b){var c=document.createElement('link');c.rel='stylesheet';c.href=b.getAttribute('data-wpninetypluscured-href');Array.from(b.attributes).forEach(function(attr){if(attr.name!=='data-wpninetypluscured-href'&&attr.name!=='href'){c.setAttribute(attr.name,attr.value)}});document.head.appendChild(c)});document.querySelectorAll('#wpninetyplus-wpninetypluscured-assets script[data-wpninetypluscured-src]').forEach(function(b){var c=document.createElement('script');c.src=b.getAttribute('data-wpninetypluscured-src');c.defer=true;Array.from(b.attributes).forEach(function(attr){if(attr.name!=='data-wpninetypluscured-src'&&attr.name!=='src'){c.setAttribute(attr.name,attr.value)}});document.body.appendChild(c)});document.querySelectorAll('#wpninetyplus-wpninetypluscured-assets script:not([data-wpninetypluscured-src])').forEach(function(b){var c=document.createElement('script');c.text=b.textContent;Array.from(b.attributes).forEach(function(attr){if(attr.name!=='type'){c.setAttribute(attr.name,attr.value)}});document.body.appendChild(c)});document.querySelectorAll('#wpninetyplus-wpninetypluscured-assets style').forEach(function(b){document.head.appendChild(b)});e.forEach(function(selector){document.querySelectorAll(selector).forEach(function(element){element.classList.remove('r-temporary')})});var d=document.getElementById('wpninetyplus-wpninetypluscured-assets');if(d)d.remove()},a)}( " . $loading_period_expression . ", " . $selectors_js . " );</script>\n";
+
+        // Clean up excessive multi-line gaps in the HTML output buffer.
         $html = preg_replace( "/[\r\n]{3,}/", "\n\n", $html );
 
+        // Securely inject the finalized optimized block right before the closing </body> tag.
         if ( false !== strpos( $html, '</body>' ) ) {
             $html = str_replace( '</body>', $optimized_block . "\n</body>", $html );
         } else {

@@ -1,113 +1,87 @@
-<?php 
-
+<?php
 /**
- * The plugin : WordPress Optimization Ninety Plus (90+) Grade Speed Insight 
- * Secured JS Optimized static cross pages and devices cured html!
- *
- * @link              https://www.nielsoffice.com/        
- * @since             1.0.0
- * @package           Wpninetyplus
+ * Plugin Name: WPNinetyPlus InteractiveExe Core
+ * Package:     Wpninetyplus
+ * Link:        https://www.nielsoffice.com/        
+ * Since:       1.0.0
+ * Description: WordPress Optimization Ninety Plus (90+) Grade Speed Insight. 
+ *              Secured JS Optimized static cross pages and devices cured html!
  */
 
 namespace WPNinetyPlus;
 
+// Prevent direct access to this file.
 if ( ! defined( 'WPINC' ) || ! defined( 'ABSPATH' ) ) {
     die;
 }
 
+/**
+ * Class InteractiveExe
+ * 
+ * Handles the processing, cleaning, minification, and protection of JavaScript 
+ * content and inline script tags.
+ *
+ * @since 1.0.0
+ */
 class InteractiveExe {
 
     /**
-     * Minifies, shortens, removes spacing, and strips comments from JavaScript 
-     * without altering its execution flow or positioning.
+     * Cleans and minifies inline JavaScript code safely by stripping comments 
+     * and collapsing excessive whitespace.
      *
-     * @param string $interactive
-     * @return string
+     * @since 1.0.0
+     * @param string $interactive Raw JavaScript code string.
+     * @return string             Minified and cleaned JavaScript string.
      */
-    public function javascript_cured_ninety_plus( string $interactive ) : string
-    {
+    public function javascript_cured_ninety_plus( string $interactive ) : string {
         if ( empty( $interactive ) ) {
             return $interactive;
         }
 
-        /**
-         * @package WPNinetyPlus 
-         * @since 1.0.0
-         * @date October 13, 2026 AM
-         * @maintainer NielsOffice
-         * Remove HTML comment wrappers (<!-- and -->) common in WP inline scripts
-         **/
-        $interactive = preg_replace( '/<!--|-->/', '', $interactive );
-
-        /**
-         * @package WPNinetyPlus 
-         * @since 1.0.0
-         * @date October 13, 2026 AM
-         * @maintainer NielsOffice
-         * Remove multi-line block comments 
-         **/
+        // Remove multi-line block comments (/* ... */).
         $interactive = preg_replace( '!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $interactive );
 
-        /**
-         * @package WPNinetyPlus 
-         * @since 1.0.0
-         * @date October 13, 2026 AM
-         * @maintainer NielsOffice
-         * Remove single-line comments (// ...), guarding against URLs inside strings
-         **/
-        // Fixed regex: protects '://' in URLs from being treated as comments
+        // Remove single-line comments (// ...), guarding against URLs inside string literals.
         $interactive = preg_replace( '/(?<!["\'`]|[:])\/\/.*/m', '', $interactive );
 
-        /**
-         * @package WPNinetyPlus 
-         * @since 1.0.0
-         * @date October 13, 2026 AM
-         * @maintainer NielsOffice
-         * Replace line breaks and tabs with a single space to flatten the script
-         **/
-        // Adjusted to avoid breaking Automatic Semicolon Insertion (ASI)
-        $interactive = preg_replace( '/[ \t]+/', ' ', $interactive );
-        
-        // Changed from "\n" to ' ' to flatten the script into a single line
-        $interactive = preg_replace( '/\R+/', ' ', $interactive );
-
-        /**
-         * @package WPNinetyPlus 
-         * @since 1.0.0
-         * @date October 13, 2026 AM
-         * @maintainer NielsOffice
-         * Safely remove spaces around common code operators and delimiters
-         **/
-        $search  = [ ' ;', '; ', ' ,', ', ', ' {', '{ ', ' }', '} ', ' (', '( ', ' )', ') ' ];
-        $replace = [ ';', ';', ',', ',', '{', '{', '}', '}', '(', '(', ')', ')' ];
-        $interactive = str_replace( $search, $replace, $interactive );
+        // Collapse excessive whitespace, tabs, and newlines into a single space.
+        $interactive = preg_replace( '/\s+/', ' ', $interactive );
 
         return trim( $interactive );
     }
 
     /**
-     * @package WPNinetyPlus 
+     * Processes HTML content, cleaning inline scripts while leaving 
+     * HTML layout, attributes, and external <script src="..."> tags completely untouched.
+     *
      * @since 1.0.0
-     * @date October 13, 2026 AM
-     * @maintainer NielsOffice
-     * First, minify and clean it using your standard method
-     * Generate a clean self-executing snippet without debug logging clutter
-     **/
-    public function protected_ninety_plus_script( string $handwriting ) : string
-    {
-        $minified = $this->javascript_cured_ninety_plus( $handwriting );
-
-        if ( empty( $minified ) ) {
+     * @param string $html_content The HTML content or block containing script tags.
+     * @return string              The processed HTML with minified inline scripts.
+     */
+    public function protected_ninety_plus_script( string $html_content ) : string {
+        if ( empty( $html_content ) ) {
             return '';
         }
 
-        $encoded = base64_encode( $minified );
-        $secured_script = sprintf(
-            '(function(){try{eval(atob("%s"));}catch(e){/* Silent protection */}})();',
-            $encoded
-        );
+        // Match all <script> tags (both inline and external) across multiple lines.
+        $pattern = '/(<script\b[^>]*>)(.*?)(<\/script>)/is';
 
-        return $secured_script;
+        $processed_html = preg_replace_callback( $pattern, function( $matches ) {
+            $open_tag   = $matches[1]; // e.g., <script> or <script src="..." defer>
+            $js_content = $matches[2]; // The inner JavaScript content
+            $close_tag  = $matches[3]; // </script>
+
+            // If it's an external script (contains a 'src' attribute), skip modifying its inner content.
+            if ( false !== stripos( $open_tag, 'src=' ) ) {
+                return $open_tag . $js_content . $close_tag;
+            }
+
+            // Otherwise, safely minify the inline JavaScript using the internal helper method.
+            $minified_js = $this->javascript_cured_ninety_plus( $js_content );
+
+            return $open_tag . $minified_js . $close_tag;
+        }, $html_content );
+
+        return $processed_html;
     }
-
 }

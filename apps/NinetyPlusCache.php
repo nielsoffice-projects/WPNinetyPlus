@@ -1,154 +1,94 @@
-<?php 
+<?php
 /**
- * WordPress Optimization Ninety Plus (90+) - Cache Cleaner.
- *
- * Clears the WordPress object cache, plugin transients stored in the
- * database, and generated files in the plugin's dedicated cache directory.
- *
- * @package Wpninetyplus
+ * Plugin Name: WPNinetyPlus NinetyPlusCache Core
+ * Package:     Wpninetyplus
+ * Link:        https://www.nielsoffice.com/        
+ * Since:       1.0.0
+ * Description: WordPress Optimization Ninety Plus (90+) Grade Speed Insight. 
+ *              Split cache engine and UI controller classes with singleton support.
  */
 
 namespace WPNinetyPlus;
 
+use WPNinetyPlus\NinetyPlusCacheUI;
+
+// Prevent direct access to this file.
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+/**
+ * Class NinetyPlusCache
+ * 
+ * Core cache operations engine responsible for clearing database transients 
+ * and purging files in the dedicated cache directory.
+ *
+ * @since 1.0.0
+ */
 final class NinetyPlusCache {
 
     /**
-     * Singleton instance.
+     * Cache directory name created inside the WordPress uploads directory.
      *
+     * @since 1.0.0
+     * @var string
+     */
+    private const CACHE_DIRECTORY = 'wpninetyplus-cache';
+
+    /**
+     * Transient prefix owned and used by this plugin.
+     *
+     * @since 1.0.0
+     * @var string
+     */
+    private const TRANSIENT_PREFIX = '_transient_wpninetyplus_';
+
+    /**
+     * Transient timeout prefix owned and used by this plugin.
+     *
+     * @since 1.0.0
+     * @var string
+     */
+    private const TIMEOUT_PREFIX = '_transient_timeout_wpninetyplus_';
+
+    /**
+     * Singleton instance of the class.
+     *
+     * @since 1.0.0
      * @var NinetyPlusCache|null
      */
     private static $instance = null;
 
     /**
-     * Cache directory name inside the WordPress uploads directory.
-     */
-    private const CACHE_DIRECTORY = 'wpninetyplus-cache';
-
-    /**
-     * Transient prefix owned by this plugin.
-     */
-    private const TRANSIENT_PREFIX = '_transient_wpninetyplus_';
-
-    /**
-     * Transient timeout prefix owned by this plugin.
-     */
-    private const TIMEOUT_PREFIX = '_transient_timeout_wpninetyplus_';
-
-    /**
-     * Result transient lifetime in seconds.
-     */
-    private const RESULT_TTL = 120;
-
-    /**
-     * Get the singleton instance.
+     * Retrieves the singleton instance of the class.
      *
-     * @return NinetyPlusCache
+     * @since 1.0.0
+     * @return NinetyPlusCache The singleton instance.
      */
     public static function get_instance() {
         if ( null === self::$instance ) {
             self::$instance = new self();
         }
 
+        // Also ensure UI controller initializes its hooks when the core engine is called.
+        NinetyPlusCacheUI::get_instance();
+
         return self::$instance;
     }
 
     /**
-     * Register hooks.
-     */
-    private function __construct() {
-        add_action( 'admin_bar_menu', array( $this, 'add_toolbar_item' ), 100 );
-        add_action( 'admin_post_admin_bar_clear_all_cache', array( $this, 'handle_cache_clear' ) );
-        add_action( 'admin_notices', array( $this, 'show_admin_notice' ) );
-        add_action( 'wp_footer', array( $this, 'show_frontend_notice' ) );
-    }
-
-    /**
-     * Add the cache-clearing action to the toolbar.
+     * Deletes database-stored transients belonging specifically to this plugin.
      *
-     * @param \WP_Admin_Bar $admin_bar WordPress admin bar.
+     * @since 1.0.0
+     * @return string Operation status ('success' or 'failed').
      */
-    public function add_toolbar_item( $admin_bar ) {
-        if ( ! current_user_can( 'manage_options' ) ) {
-            return;
-        }
-
-        $admin_bar->add_node(
-            array(
-                'id'    => 'clear-all-site-cache',
-                'title' => '🧹 90+ Clear Cache',
-                'href'  => wp_nonce_url(
-                    admin_url( 'admin-post.php?action=admin_bar_clear_all_cache' ),
-                    'admin_bar_clear_all_cache'
-                ),
-                'meta'  => array(
-                    'title' => 'Clear WordPress and Ninety Plus caches',
-                ),
-            )
-        );
-    }
-
-    /**
-     * Process the cache-clearing request.
-     */
-    public function handle_cache_clear() {
-        if ( ! current_user_can( 'manage_options' ) ) {
-            wp_die(
-                esc_html__( 'You are not allowed to clear the cache.', 'wpninetyplus' ),
-                esc_html__( 'Permission denied', 'wpninetyplus' ),
-                array( 'response' => 403 )
-            );
-        }
-
-        check_admin_referer( 'admin_bar_clear_all_cache' );
-
-        $results = array();
-
-        // 1. Flush the WordPress object cache.
-        $flush_object_cache = (bool) apply_filters(
-            'wpninetyplus_clear_object_cache',
-            ! is_multisite()
-        );
-
-        if ( $flush_object_cache && function_exists( 'wp_cache_flush' ) ) {
-            $results['object_cache'] = wp_cache_flush() ? 'success' : 'failed';
-        } else {
-            $results['object_cache'] = 'skipped';
-        }
-
-        // 2. Delete database-stored transients belonging to this plugin.
-        $results['plugin_transients'] = $this->clear_plugin_transients();
-
-        // 3. Clear generated CSS/JS files from our dedicated cache directory.
-        $results['plugin_file_cache'] = $this->clear_plugin_cache_directory();
-
-        // 4. Save results for this user, then redirect.
-        $result_key = 'wpninetyplus_result_' . get_current_user_id();
-
-        set_transient( $result_key, $results, self::RESULT_TTL );
-
-        $redirect_url = wp_get_referer() ? wp_get_referer() : admin_url();
-        $redirect_url = remove_query_arg( 'cache_clear_result', $redirect_url );
-        $redirect_url = add_query_arg( 'cache_clear_result', '1', $redirect_url );
-
-        wp_safe_redirect( $redirect_url );
-        exit;
-    }
-
-    /**
-     * Delete database-stored transients belonging to this plugin.
-     *
-     * @return string Operation status.
-     */
-    private function clear_plugin_transients() {
+    public function clear_plugin_transients() {
         global $wpdb;
 
         $transient_pattern = $wpdb->esc_like( self::TRANSIENT_PREFIX ) . '%';
         $timeout_pattern   = $wpdb->esc_like( self::TIMEOUT_PREFIX ) . '%';
 
+        // Query database options table to bulk delete plugin transients and timeouts.
         $deleted = $wpdb->query(
             $wpdb->prepare(
                 "DELETE FROM {$wpdb->options}
@@ -163,12 +103,13 @@ final class NinetyPlusCache {
     }
 
     /**
-     * Clear files in the plugin's dedicated cache directory.
-     * Automatically creates the folder safely if it doesn't exist yet.
+     * Clears cached files in the plugin's dedicated cache directory.
+     * Automatically provisions the folder and an index security file safely if missing.
      *
-     * @return string Operation status.
+     * @since 1.0.0
+     * @return string Operation status ('success', 'failed', or 'no_files_found').
      */
-    private function clear_plugin_cache_directory() {
+    public function clear_plugin_cache_directory() {
         $uploads = wp_upload_dir();
 
         if ( ! empty( $uploads['error'] ) || empty( $uploads['basedir'] ) ) {
@@ -187,7 +128,7 @@ final class NinetyPlusCache {
             return 'failed';
         }
 
-        // Automatically provision folder and index security file if missing
+        // Automatically provision folder and index security file if missing.
         if ( ! file_exists( $cache_dir ) ) {
             wp_mkdir_p( $cache_dir );
             @file_put_contents( $cache_dir . '/index.php', '<?php // Silence is golden.' );
@@ -215,11 +156,12 @@ final class NinetyPlusCache {
     }
 
     /**
-     * Recursively remove files and subdirectories.
+     * Recursively removes files and subdirectories from the cache directory.
      *
-     * @param string $dir      Directory to clean.
-     * @param bool   $is_root  Whether this is the cache root.
-     * @return array{success: bool, deleted: bool}
+     * @since 1.0.0
+     * @param string $dir     Directory path to clean.
+     * @param bool   $is_root Whether this is the root cache directory.
+     * @return array{success: bool, deleted: bool} Operation success status array.
      */
     private function empty_cache_directory( $dir, $is_root = false ) {
         $status = array(
@@ -244,6 +186,7 @@ final class NinetyPlusCache {
                 continue;
             }
 
+            // Protect root security index file from deletion.
             if ( $is_root && 'index.php' === $entry ) {
                 continue;
             }
@@ -288,52 +231,5 @@ final class NinetyPlusCache {
         }
 
         return $status;
-    }
-
-    public function show_admin_notice() {
-        if ( ! is_admin() ) {
-            return;
-        }
-        $this->render_cache_notice();
-    }
-
-    public function show_frontend_notice() {
-        if ( is_admin() ) {
-            return;
-        }
-        $this->render_cache_notice();
-    }
-
-    /**
-     * Render the cache result notice using Acorn Blade views.
-     */
-    private function render_cache_notice() {
-        if (
-            ! current_user_can( 'manage_options' )
-            || ! isset( $_GET['cache_clear_result'] )
-            || '1' !== sanitize_text_field( wp_unslash( $_GET['cache_clear_result'] ) )
-        ) {
-            return;
-        }
-
-        static $rendered = false;
-        if ( $rendered ) {
-            return;
-        }
-        $rendered = true;
-
-        $result_key = 'wpninetyplus_result_' . get_current_user_id();
-        $results    = get_transient( $result_key );
-        delete_transient( $result_key );
-
-        if ( ! is_array( $results ) ) {
-            $results = array();
-        }
-
-        // Render via Acorn Blade view safely
-        echo \Roots\view(
-            'wpninetyplus::partials.cache-notice',
-            compact( 'results' )
-        )->render();
     }
 }

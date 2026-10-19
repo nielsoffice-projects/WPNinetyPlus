@@ -1,23 +1,5 @@
-# WPNinetyPlus (WP Plugin/PHPLibrary)
+# WPNinetyPlus (90+) (WPPlugin/PHPLibrary)
 WordPress Optimization 90+ Grade Speed Insight 
-
-```HTML
-
-<!-- CSS -->
-<link rel="preload" href="heavy-styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="heavy-styles.css"></noscript>
-
-<!-- JS --> 
-<script src="your-script.js" defer></script>
-
-// IF using Manger | safe header <head>
-
-style.css
-
-<style id="layout"> homepage, or_merge { background-color: red !important; } </style>
-<script id="interactive"> document.addEventListener("DOMContentLoaded", () => { console.log('Im safe in header') });</script>
-
-```
 
 ```PHP
 // Hook Add Style Merge  | theme directory functions.php
@@ -42,8 +24,8 @@ add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
 
 ```PHP
 /**
- * .env | plugin directory 
- * Free Version 
+ * .env | plugin directory for Free Version no GUI
+ * 
  * */ 
 
 WPNINETYPLUS_MANAGER = true 
@@ -51,6 +33,8 @@ WPNINETYPLUS_SYNCASSETS = true
 
 WPNINETYPLUS_ISOLATE = true
 WPNINETYPLUS_INIT = false
+
+WPNINETYPLUS_FULLPAINT = true 
 
 OPTIMIZED_CLIENT_HTML = true
 OPTIMIZED_CLIENT_JAVASCRIPT = true 
@@ -82,7 +66,6 @@ add_filter( 'wpninetyplus_sync_assets', function( $keywords ) {
         // Add your target asset paths or strings here
     );
 });
-
 
 /**
  * 2. Define Font Preloads

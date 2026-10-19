@@ -8,14 +8,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Plugin Name: WP Ninety Plus Sync Asset Optimizer
- * Description: Automatically strips non-critical head assets (CSS, JS, Inline styles/scripts, Preloads) and defers execution via hooks.
+ * Description: Automatically strips non-critical head assets (CSS, JS, Inline styles/scripts, Preloads) and defers execution via hooks and responsive delays.
  * Version: 1.1.0
  */
 
 class WPNinetyPlusSync {
 
     /**
-     * Core handler to parse HTML, strip targets via hooks/keywords, and build the dynamic loader script.
+     * Core handler to parse HTML, strip targets via exclusions/hooks, and build the dynamic loader script.
      *
      * @param string $html
      * @return string
@@ -28,41 +28,47 @@ class WPNinetyPlusSync {
         }
 
         $theme_uri = get_template_directory_uri();
-        $version   = WPNINETYPLUS_VERSION ?? '1.0.0';
+        $version   = defined( 'WPNINETYPLUS_VERSION' ) ? WPNINETYPLUS_VERSION : '1.0.0';
 
-        $delayed_css          = array();
-        $extracted_inline_css = array();
-        $delayed_js           = array();
-        $extracted_inline_js  = array();
-        $extracted_preloads   = array();
+        $wpninetypluscured_css      = array();
+        $extracted_inline_css       = array();
+        $wpninetypluscured_js       = array();
+        $extracted_inline_js        = array();
+        $extracted_preloads         = array();
 
-        // 1. Fetch Keywords to Delay via Filter
-        $keywords_to_delay = apply_filters( 'wpninetyplus_sync_assets', array() );
+        // --- 1. GRAB ASSETS WITH EXCLUSIONS & FILTERS ---
 
-        // Process External Files (CSS & JS) based on Keywords
-        if ( ! empty( $keywords_to_delay ) ) {
-            foreach ( $keywords_to_delay as $keyword ) {
-                // Regex for CSS (<link>)
-                $pattern_css = '/<link\b[^>]*href\s*=\s*(["\'])([^"\']*' . preg_quote( $keyword, '/' ) . '[^"\']*)\1[^>]*>/i';
-                if ( preg_match_all( $pattern_css, $html, $matches_css ) ) {
-                    foreach ( $matches_css[2] as $index => $css_url ) {
-                        $delayed_css[] = esc_url_raw( $css_url );
-                        $html = str_replace( $matches_css[0][$index], '', $html );
+        // A. Grab stylesheet tags (Except critical 'style.css' or excluded IDs)
+        $pattern_css = '/<link\b[^>]*rel\s*=\s*(["\'])stylesheet\1[^>]*>/i';
+        $excluded_css_ids = array( 'layout', 'WPNinetyPlusMerge' );
+
+        if ( preg_match_all( $pattern_css, $html, $matches_css ) ) {
+            foreach ( $matches_css[0] as $index => $full_tag ) {
+                $css_basename = '';
+                if ( preg_match( '/href\s*=\s*(["\'])([^"\']+)\1/i', $full_tag, $url_match ) ) {
+                    $css_basename = basename( parse_url( $url_match[2], PHP_URL_PATH ) );
+                }
+
+                if ( 'style.css' === $css_basename ) {
+                    continue;
+                }
+
+                $skip = false;
+                foreach ( $excluded_css_ids as $id ) {
+                    if ( false !== strpos( $full_tag, 'id="' . $id . '"' ) || false !== strpos( $full_tag, "id='" . $id . "'" ) ) {
+                        $skip = true;
+                        break;
                     }
                 }
 
-                // Regex for JS (<script>)
-                $pattern_js = '/<script\b[^>]*src\s*=\s*(["\'])([^"\']*' . preg_quote( $keyword, '/' ) . '[^"\']*)\1[^>]*>[\s\S]*?<\/script>/i';
-                if ( preg_match_all( $pattern_js, $html, $matches_js ) ) {
-                    foreach ( $matches_js[2] as $index => $js_url ) {
-                        $delayed_js[] = esc_url_raw( $js_url );
-                        $html = str_replace( $matches_js[0][$index], '', $html );
-                    }
+                if ( !$skip ) {
+                    $wpninetypluscured_css[] = $full_tag;
+                    $html = str_replace( $full_tag, '', $html );
                 }
             }
         }
 
-        // 2. Grab all preloads and preconnects automatically
+        // B. Grab all preloads and preconnects
         $pattern_preload = '/<link\b[^>]*rel\s*=\s*(["\'])(preload|preconnect)\1[^>]*>/i';
         if ( preg_match_all( $pattern_preload, $html, $matches_preload ) ) {
             foreach ( $matches_preload[0] as $tag ) {
@@ -71,20 +77,91 @@ class WPNinetyPlusSync {
             }
         }
 
-        // 2B. Font Preloads via Filter (Appends directly to <head>)
+        // Font Preloads via Filter (Appends directly to <head>)
         $preload_block = apply_filters( 'wpninetyplus_sync_font_preloads', '', $theme_uri );
         if ( ! empty( $preload_block ) && false !== strpos( $html, '</head>' ) ) {
             $html = str_replace( '</head>', $preload_block . '</head>', $html );
         }
 
-        // --- 3. BUILD THE OPTIMIZED FOOTER HIDDEN CONTAINER ---
+        // C. Grab inline <style> blocks (Except critical IDs)
+        $pattern_style = '/<style\b[^>]*>([\s\S]*?)<\/style>/i';
+        $excluded_style_ids = array( 'layout', 'WPNinetyPlusMerge' );
+
+        if ( preg_match_all( $pattern_style, $html, $matches_style ) ) {
+            foreach ( $matches_style[0] as $index => $full_tag ) {
+                $skip = false;
+                foreach ( $excluded_style_ids as $id ) {
+                    if ( false !== strpos( $full_tag, 'id="' . $id . '"' ) || false !== strpos( $full_tag, "id='" . $id . "'" ) ) {
+                        $skip = true;
+                        break;
+                    }
+                }
+                
+                if ( !$skip ) {
+                    $extracted_inline_css[] = $full_tag;
+                    $html = str_replace( $full_tag, '', $html );
+                }
+            }
+        }
+
+        // D. Grab external script tags (Except critical 'vanilla.js' or excluded IDs)
+        $pattern_script = '/<script\b[^>]*\bsrc\s*=\s*(["\'])([^"\']+)\1[^>]*>[\s\S]*?<\/script>/i';
+        $excluded_script_ids = array( 'interactive', 'WPNinetyPlusInteractive' );
+
+        if ( preg_match_all( $pattern_script, $html, $matches_script ) ) {
+            foreach ( $matches_script[0] as $index => $full_tag ) {
+                $js_url = $matches_script[2][$index];
+                $js_basename = basename( parse_url( $js_url, PHP_URL_PATH ) );
+
+                if ( 'vanilla.js' === $js_basename ) {
+                    continue;
+                }
+
+                $skip = false;
+                foreach ( $excluded_script_ids as $id ) {
+                    if ( false !== strpos( $full_tag, 'id="' . $id . '"' ) || false !== strpos( $full_tag, "id='" . $id . "'" ) ) {
+                        $skip = true;
+                        break;
+                    }
+                }
+
+                if ( !$skip ) {
+                    $wpninetypluscured_js[] = $full_tag;
+                    $html = str_replace( $full_tag, '', $html );
+                }
+            }
+        }
+
+        // E. Grab inline script blocks (EXPLICITLY SKIPPING id="interactive")
+        $pattern_inline_js = '/<script\b[^>]*>(?![\s\S]*src=)([\s\S]*?)<\/script>/i';
+        if ( preg_match_all( $pattern_inline_js, $html, $matches_inline_js ) ) {
+            foreach ( $matches_inline_js[0] as $index => $full_tag ) {
+                $js_content = $matches_inline_js[1][$index];
+                
+                if ( false !== strpos( $full_tag, 'id="interactive"' ) || false !== strpos( $full_tag, "id='interactive'" ) ) {
+                    continue;
+                }
+
+                $extracted_inline_js[] = $full_tag; 
+                $html = str_replace( $full_tag, '', $html );
+            }
+        }
+
+
+        // --- 2. BUILD THE OPTIMIZED FOOTER HIDDEN CONTAINER ---
         $assets_block  = "\n<!-- WPNinetyPlus Execution Block -->\n";
         $assets_block .= "<div id=\"wpninetyplus-delayed-assets\" style=\"display:none;\">\n";
 
-        // A. External CSS URLs
-        if ( ! empty( $delayed_css ) ) {
-            foreach ( $delayed_css as $css_url ) {
-                $assets_block .= '<link rel="stylesheet" data-delayed-href="' . esc_url( $css_url . '?ver=' . $version ) . '">' . "\n";
+        // A. External CSS Tags (Converted to data attributes)
+        if ( ! empty( $wpninetypluscured_css ) ) {
+            foreach ( $wpninetypluscured_css as $css_tag ) {
+                if ( preg_match( '/href\s*=\s*(["\'])([^"\']+)\1/i', $css_tag, $url_match ) ) {
+                    $href_val = $url_match[2];
+                    $assets_block .= sprintf(
+                        '<link rel="stylesheet" data-delayed-href="%s">' . "\n",
+                        esc_url( $href_val . '?ver=' . $version )
+                    );
+                }
             }
         }
 
@@ -98,21 +175,34 @@ class WPNinetyPlusSync {
             $assets_block .= implode( "\n", $extracted_inline_css ) . "\n";
         }
 
-        // D. External JS URLs
-        if ( ! empty( $delayed_js ) ) {
-            foreach ( $delayed_js as $js_url ) {
-                $assets_block .= '<script data-delayed-src="' . esc_url( $js_url ) . '" defer></script>' . "\n";
+        // D. External JS Tags
+        if ( ! empty( $wpninetypluscured_js ) ) {
+            foreach ( $wpninetypluscured_js as $js_tag ) {
+                if ( preg_match( '/src\s*=\s*(["\'])([^"\']+)\1/i', $js_tag, $url_match ) ) {
+                    $src_val = $url_match[2];
+                    $assets_block .= sprintf(
+                        '<script data-delayed-src="%s" defer></script>' . "\n",
+                        esc_url( $src_val )
+                    );
+                }
             }
         }
 
-        // E. Inline JS Blocks
+        // E. Inline JS Blocks (Converted to text/plain for safe delayed injection)
         if ( ! empty( $extracted_inline_js ) ) {
-            $assets_block .= implode( "\n", $extracted_inline_js ) . "\n";
+            foreach ( $extracted_inline_js as $js_tag ) {
+                $modified_tag = preg_replace( '/\btype\s*=\s*(["\'])text\/javascript\1/i', 'type="text/plain"', $js_tag );
+                if ( false === strpos( $modified_tag, 'type=' ) ) {
+                    $modified_tag = str_replace( '<script', '<script type="text/plain"', $modified_tag );
+                }
+                $assets_block .= $modified_tag . "\n";
+            }
         }
 
         $assets_block .= "</div>\n";
 
-        // --- 4. BUILD THE JAVASCRIPT INJECTION SCRIPT ---
+
+        // --- 3. BUILD THE JAVASCRIPT INJECTION SCRIPT ---
         $assets_block .= '<script>';
         $assets_block .= 'window.addEventListener("load", function() {';
         
@@ -132,9 +222,19 @@ class WPNinetyPlusSync {
         $assets_block .= '  var c = document.createElement("link"); c.rel = "stylesheet"; c.href = b.getAttribute("data-delayed-href"); document.head.appendChild(c);';
         $assets_block .= '});';
 
+        // Inject Inline Styles
+        $assets_block .= 'document.querySelectorAll("#wpninetyplus-delayed-assets style").forEach(function(b){';
+        $assets_block .= '  document.head.appendChild(b);';
+        $assets_block .= '});';
+
         // Inject Intercepted Delayed Scripts from Container
         $assets_block .= 'document.querySelectorAll("#wpninetyplus-delayed-assets script[data-delayed-src]").forEach(function(b){';
         $assets_block .= '  var c = document.createElement("script"); c.src = b.getAttribute("data-delayed-src"); c.defer = true; document.body.appendChild(c);';
+        $assets_block .= '});';
+
+        // Inject Inline Scripts (Restoring from text/plain)
+        $assets_block .= 'document.querySelectorAll("#wpninetyplus-delayed-assets script:not([data-delayed-src])").forEach(function(b){';
+        $assets_block .= '  var c = document.createElement("script"); c.text = b.textContent; Array.from(b.attributes).forEach(function(attr){ if(attr.name !== "type"){ c.setAttribute(attr.name, attr.value); } }); document.body.appendChild(c);';
         $assets_block .= '});';
 
         // Temporary Class Removals via Filter (Prevents FOUC / layout shifts)
@@ -154,6 +254,10 @@ class WPNinetyPlusSync {
         $assets_block .= '}, loadingPeriod);'; 
         $assets_block .= '});';
         $assets_block .= '</script>';
+
+
+        // --- 4. COLLAPSE WHITESPACE & INJECT BEFORE </body> ---
+        $html = preg_replace( "/[\r\n]{3,}/", "\n\n", $html );
 
         if ( false !== strpos( $html, '</body>' ) ) {
             $html = str_replace( '</body>', $assets_block . "\n</body>", $html );

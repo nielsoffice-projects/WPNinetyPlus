@@ -12,94 +12,79 @@
 namespace WPNinetyPlus;
 
 if ( ! defined( 'WPINC' ) || ! defined( 'ABSPATH' ) ) {
-	die;
+    die;
 }
 
 use WPNinetyPlus\HtmlExe;
 use WPNinetyPlus\LayoutMergeExe;
 use WPNinetyPlus\WPNinetyPlusManager;
 use WPNinetyPlus\WPNinetyPlusSync;
+use WPNinetyPlus\FullPaintExe;
 
 class Init {
 
     public function __construct() {
-
-        /**
-         * @package WPNinetyPlus 
-         * @since 1.0.0
-         * @date October 13, 2026 AM
-         * @maintainer NielsOffice
-         * Register action hooks
-         * Start output buffering early at priority 1 on template_redirect
-         **/
         add_action( 'plugins_loaded', [ $this, 'init' ] );
         add_action( 'template_redirect', [ $this, 'ninety_plus_layout' ], 1 );        
-       
-  
     }
 
     /**
-     * @package WPNinetyPlus 
-     * @since 1.0.0
-     * @date October 13, 2026 AM
-     * @maintainer NielsOffice
-     * Avoid minifying admin pages, AJAX requests, or REST API responses
-     * Start output buffering for HTML curing if OCH constant evaluates to true
-     **/
+     * Initialize standard HTML minification buffering.
+     */
     public function init() {
-
         if ( is_admin() || wp_doing_ajax() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
             return;
         }
         
-         $och_enabled = defined('OCH') && OCH;
+        $och_enabled = defined('OCH') && OCH;
         if ( $och_enabled && class_exists( HtmlExe::class ) ) {
             ob_start( [ ( new HtmlExe() ), 'html_cured_ninety_plus' ] );
         }
-
-
-        }
+    }
         
-
-
     /**
-     * @package WPNinetyPlus 
-     * @since 1.0.0
-     * @date October 13, 2026 AM
-     * @maintainer NielsOffice
-     * Avoid running on admin pages, AJAX requests, or REST API responses
-     * Check if stylesheet merging is enabled
-     **/
+     * Unified pipeline for layout painting, asset injection, sync, and merging.
+     */
     public function ninety_plus_layout() {
-
         if ( is_admin() || wp_doing_ajax() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
             return;
         }
 
-        $wpnia_enabled = defined( 'WNPIA' ) && WNPIA;
-        if ($wpnia_enabled) {
-            ob_start(function ($html) {
+        // Single unified output buffer callback to process everything sequentially without conflicts
+        ob_start( function( $html ) {
+            if ( empty( $html ) ) {
+                return $html;
+            }
+            
+             // 1. FullPaintExe (Images, Videos, Skeleton Frames)
+            $wpnpfp_enabled = defined('WPNPFP') && WPNPFP;
+            if($wpnpfp_enabled) {
+                $full_paint = new FullPaintExe();
+                $html = $full_paint->paint_cured_ninety_plus( $html );
+            }
+
+            // 2. Manager Asset Injection
+            $wpnia_enabled = defined( 'WNPIA' ) && WNPIA;
+            if ( $wpnia_enabled && class_exists( WPNinetyPlusManager::class ) ) {
                 $manager = new WPNinetyPlusManager();
-                return $manager->cured_assets_injection($html);
-            });
-        }
+                $html = $manager->cured_assets_injection( $html );
+            }
 
-        $wpnsa_enabled = defined( 'WPNSA' ) && WPNSA;
-        if ($wpnsa_enabled) {
-            ob_start(function ($html) {
-                $manager = new WPNinetyPlusSync();
-                return $manager->cured_assets_sync($html);
-            });
-        }
+            // 3. Asset Sync
+            $wpnsa_enabled = defined( 'WPNSA' ) && WPNSA;
+            if ( $wpnsa_enabled && class_exists( WPNinetyPlusSync::class ) ) {
+                $sync = new WPNinetyPlusSync();
+                $html = $sync->cured_assets_sync( $html );
+            }
 
-        $oclm_enabled = defined( 'OCLM' ) && OCLM;
-        if ( $oclm_enabled ) {
-            ob_start( [ (new LayoutMergeExe()), 'layout_merge_one' ] );
-        }
+            // 4. Layout Merge
+            $oclm_enabled = defined( 'OCLM' ) && OCLM;
+            if ( $oclm_enabled && class_exists( LayoutMergeExe::class ) ) {
+                $layout_merge = new LayoutMergeExe();
+                $html = $layout_merge->layout_merge_one( $html );
+            }
 
-        
+            return $html;
+        } );
     }
-
-
- 
 }

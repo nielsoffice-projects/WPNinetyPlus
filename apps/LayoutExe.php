@@ -1,69 +1,54 @@
 <?php
 /**
- * The plugin : WordPress Optimization Ninety Plus (90+) Grade Speed Insight 
- *
- * Secured CSS Optimized static cross pages and devices cured html!
- *
- * @link              https://www.nielsoffice.com/        
- * @since             1.0.0
- * @package           Wpninetyplus
- *
+ * Plugin Name: WPNinetyPlus LayoutExe Core
+ * Package:     Wpninetyplus
+ * Link:        https://www.nielsoffice.com/        
+ * Since:       1.0.0
+ * Description: WordPress Optimization Ninety Plus (90+) Grade Speed Insight. 
+ *              Secured CSS Optimized static cross pages and devices cured html!
  */
 
 namespace WPNinetyPlus;
 
+// Prevent direct access to this file.
 if ( ! defined( 'WPINC' ) || ! defined( 'ABSPATH' ) ) {
-	die;
+    die;
 }
 
+/**
+ * Class LayoutExe
+ * 
+ * Handles the processing, cleaning, and minification of raw CSS style content 
+ * for layout optimization.
+ *
+ * @since 1.0.0
+ */
 class LayoutExe {
 
-    public function css_cured_ninety_plus( string $layout ) : string 
-    {
-
+    /**
+     * Cleans, strips comments from, and minifies raw CSS code strings.
+     *
+     * @since 1.0.0
+     * @param string $layout Raw CSS code string to be optimized.
+     * @return string        Minified and optimized CSS string.
+     */
+    public function css_cured_ninety_plus( string $layout ) : string {
         if ( empty( $layout ) ) {
             return $layout;
         }
 
-        /**
-         * @package WPNinetyPlus 
-         * @since 1.0.0
-         * @date October 13, 2026 AM
-         * @maintainer NielsOffice
-         * Remove CSS comments
-         **/
+        // Wipe out all CSS multi-line comments (/* ... */).
         $layout = preg_replace( '!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $layout );
 
-        /**
-         * @package WPNinetyPlus 
-         * @since 1.0.0
-         * @date October 13, 2026 AM
-         * @maintainer NielsOffice
-         * Normalize line breaks and tabs
-         **/
-        $layout = str_replace( [ "\r\n", "\r", "\n", "\t" ], '', $layout );
-
-        /**
-         * @package WPNinetyPlus 
-         * @since 1.0.0
-         * @date October 13, 2026 AM
-         * @maintainer NielsOffice
-         * Collapse multiple spaces into a single space
-         **/
+        // Normalize all line breaks, tabs, and multiple spaces into a single space.
         $layout = preg_replace( '/\s+/', ' ', $layout );
 
-       /**
-         * @package WPNinetyPlus 
-         * @since 1.0.0
-         * @date October 13, 2026 AM
-         * @maintainer NielsOffice
-         * Remove unnecessary spaces around syntax characters
-         **/
-        $search = [ ' ;', '; ', ' {', '{ ', ' }', '} ', ' :', ': ', ' ,', ', ' ];
+        // Remove unnecessary spaces around core CSS syntax characters and delimiters.
+        $search  = [ ' ;', '; ', ' {', '{ ', ' }', '} ', ' :', ': ', ' ,', ', ' ];
         $replace = [ ';', ';', '{', '{', '}', '}', ':', ':', ',', ',' ];
-        $layout = str_replace( $search, $replace, $layout );
+        $layout  = str_replace( $search, $replace, $layout );
 
+        // Return the clean, trimmed CSS layout string.
         return trim( $layout );
-
     }
 }
