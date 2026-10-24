@@ -29,6 +29,15 @@ add_filter( 'wpninetyplus_merge_script', function( $scripts ) {
     return $scripts;
 });
 
+// inline scripts to the end of the <head>
+add_filter( 'wpninetyplus_inline_script', function( $position ) {
+    return 'head'; 
+});
+
+// inline scripts to the end of the <body> (Default)
+add_filter( 'wpninetyplus_inline_script', function( $position ) {
+    return 'footer'; 
+});
 
 // Ignore Assets
 add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
