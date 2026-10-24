@@ -15,6 +15,21 @@ add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
     return $stylesheets;
 });
 
+add_filter( 'wpninetyplus_merge_script', function( $scripts ) {
+    
+    // 1. Local JS file name
+    $scripts[] = 'custom-script.js';
+    
+    // 2. External CDN JS URL or keyword
+    $scripts[] = 'cdnjs.cloudflare.com/ajax/libs/jquery';
+    
+    // 3. Inline script ID (e.g., <script id="inline_ids">...)
+    $scripts[] = 'inline_ids';
+    
+    return $scripts;
+});
+
+
 // Ignore Assets
 add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
     
