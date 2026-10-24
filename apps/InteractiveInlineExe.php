@@ -94,7 +94,7 @@ class InteractiveInline {
              * @since 1.0.0
              * @param string $location Placement position ('head' or 'footer')
              */
-            $placement = apply_filters( 'wpninetyplus_inline_script_position', 'footer' );
+            $placement = apply_filters( 'wpninetyplus_inline_script', 'footer' );
 
             if ( 'head' === $placement ) {
                 // Inject right before closing </head> tag
