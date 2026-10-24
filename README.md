@@ -8,6 +8,9 @@ add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
    
     $stylesheets[] = 'two.css';
     $stylesheets[] = 'three.css';
+
+   //  CDN by keyword or full URL
+    $stylesheets[] = 'cdnjs.cloudflare.com/ajax/libs/font-awesome';
     
     return $stylesheets;
 });
