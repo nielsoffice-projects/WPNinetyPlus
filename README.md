@@ -15,6 +15,7 @@ add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
     return $stylesheets;
 });
 
+// Hook Add Script Merge
 add_filter( 'wpninetyplus_merge_script', function( $scripts ) {
     
     // 1. Local JS file name
