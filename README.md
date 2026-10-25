@@ -14,12 +14,11 @@
 ---
 
 ## 📌 Table of Contents
-- [Overview](#-overview)
-- [Core Functions & Audit Features](#-core-functions--audit-features)
-- [Configuration (`.env`)](#-configuration-env)
-- [Hooks & Filters Reference](#-hooks--filters-reference)
-- [License](#-license)
-- [Support & Donations](#-support--donations)
+- [🚀 WPNinetyPlus (90+)](#-wpninetyplus-90)
+  - [📌 Table of Contents](#-table-of-contents)
+  - [🧐 Overview](#-overview)
+  - [⚙️ Configuration (`.env`)](#️-configuration-env)
+    - [Hooks](#hooks)
 
 ---
 
@@ -71,13 +70,60 @@ WPNINETYPLUS_LAYMERGEINLINE = true
 
 
 <details>
-<summary><b>Click to expand for details!</b></summary>
+<summary><b>WPNINETYPLUS_SYNCASSETS</b></summary>
 
-### This is hidden content
-You can put text, code blocks, or even **tables** inside an accordion!
+### Hooks
+```
+WPNINETYPLUS_SYNCASSETS = false
 
-* Item one
-* Item two
+```
+```PHP
+/**
+ * Define Keywords / Assets to Delay
+ */
+add_filter( 'wpninetyplus_sync_assets', function( $keywords ) {
+    return array(
+        // Add your target asset paths or strings here
+    );
+});
+
+/**
+ * 2. Define Font Preloads
+ */
+add_filter( 'wpninetyplus_sync_font_preloads', function( $preload_block,$theme_uri ) {
+    return $preload_block;
+}, 10, 2 );
+
+/**
+ * 3. Define Dynamic Loading Timeout Period Logic
+ */
+add_filter( 'wpninetyplus_loading_period', function( $default_expression ) {
+   return $preload_block;
+});
+
+add_filter( 'wpninetyplus_sync_loading_period', function( $js_string ) {
+    return 'var loadingPeriod = window.innerWidth <= 680 ? 2000 : (window.innerWidth <= 2014 ? 2500 : 2000);';
+});
+
+/**
+ *  4. Define Conditional Page Assets, Styles, and Scripts
+ */
+add_filter( 'wpninetyplus_sync_assets_conditional', function( $block, $theme_uri,$version ) {
+    return $block;
+}, 10, 3 );
+
+/**
+ * 5. Define Selectors to Remove .r-temporary Class From
+ */
+add_filter( 'wpninetyplus_sync_temporary', function( $selectors ) {
+    return array(
+        // Add selectors here, e.g., '.content-blocks .content-blocks__item'
+    );
+});
+
+
+```
+
 
 </details>
 
@@ -130,55 +176,7 @@ add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
 
 ```
 
-```PHP
 
-// Hooks/Filters: 
-
-/**
- * Define Keywords / Assets to Delay
- */
-add_filter( 'wpninetyplus_sync_assets', function( $keywords ) {
-    return array(
-        // Add your target asset paths or strings here
-    );
-});
-
-/**
- * 2. Define Font Preloads
- */
-add_filter( 'wpninetyplus_sync_font_preloads', function( $preload_block,$theme_uri ) {
-    return $preload_block;
-}, 10, 2 );
-
-/**
- * 3. Define Dynamic Loading Timeout Period Logic
- */
-add_filter( 'wpninetyplus_loading_period', function( $default_expression ) {
-   return $preload_block;
-});
-
-add_filter( 'wpninetyplus_sync_loading_period', function( $js_string ) {
-    return 'var loadingPeriod = window.innerWidth <= 680 ? 2000 : (window.innerWidth <= 2014 ? 2500 : 2000);';
-});
-
-/**
- *  4. Define Conditional Page Assets, Styles, and Scripts
- */
-add_filter( 'wpninetyplus_sync_assets_conditional', function( $block, $theme_uri,$version ) {
-    return $block;
-}, 10, 3 );
-
-/**
- * 5. Define Selectors to Remove .r-temporary Class From
- */
-add_filter( 'wpninetyplus_sync_temporary', function( $selectors ) {
-    return array(
-        // Add selectors here, e.g., '.content-blocks .content-blocks__item'
-    );
-});
-
-
-```
 
 
 
