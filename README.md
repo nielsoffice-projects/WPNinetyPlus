@@ -21,6 +21,7 @@
     - [Hooks](#hooks)
     - [Hook](#hook)
     - [Hook](#hook-1)
+    - [Hook](#hook-2)
   - [Enable Debugging Mode](#enable-debugging-mode)
     - [⚠️ Advanced Usage Warning](#️-advanced-usage-warning)
     - [Recommended Usage](#recommended-usage)
@@ -184,11 +185,39 @@ add_filter( 'wpninetyplus_merge_script', function( $scripts ) {
 
 </details>
 
+<details>
+<summary><b>WPNINETYPLUS_INTERINLINE</b></summary>
+
+### Hook
+
+```
+WPNINETYPLUS_INTERINLINE = false
+```
+
+```PHP
+// inline scripts to the end of the <head> (General Inline)
+// WPNINETYPLUS_INTERMERGE = false
+add_filter( 'wpninetyplus_inline_script', function( $position ) {
+    return 'head'; 
+});
+
+// inline scripts to the end of the <body> (Default | General Inline)
+// WPNINETYPLUS_INTERMERGE = false
+add_filter( 'wpninetyplus_inline_script', function( $position ) {
+    return 'footer'; 
+});
+```
+
+</details>
+
+
+
+
 ```PHP
 
 
 // inline scripts to the end of the <head> (General Inline)
-// WPNINETYPLUS_INTERMERGE = false
+//  = false
 add_filter( 'wpninetyplus_inline_script', function( $position ) {
     return 'head'; 
 });
