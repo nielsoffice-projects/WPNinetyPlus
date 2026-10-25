@@ -19,6 +19,7 @@
   - [🧐 Overview](#-overview)
   - [⚙️ Configuration (`.env`)](#️-configuration-env)
     - [Hooks](#hooks)
+    - [Hook](#hook)
   - [Enable Debugging Mode](#enable-debugging-mode)
     - [⚠️ Advanced Usage Warning](#️-advanced-usage-warning)
     - [Recommended Usage](#recommended-usage)
@@ -129,6 +130,8 @@ add_filter( 'wpninetyplus_sync_temporary', function( $selectors ) {
 <details>
 <summary><b>OPTIMIZED_CLIENT_LMERGE</b></summary>
 
+### Hook
+
 ```
 OPTIMIZED_CLIENT_LMERGE = false
 ```
@@ -142,7 +145,7 @@ add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
     $stylesheets[] = 'three.css';
 
    //  CDN by keyword or full URL
-    $stylesheets[] = '[cdnjs.cloudflare.com/ajax/libs/font-awesome](https://cdnjs.cloudflare.com/ajax/libs/font-awesome)';
+    $stylesheets[] = 'cdnjs.cloudflare.com/ajax/libs/font-awesome';
     
     return $stylesheets;
 });
@@ -151,17 +154,6 @@ add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
 </details>
 
 ```PHP
-// Hook Add Style Merge  | theme directory functions.php
-
-add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
-   
-    $stylesheets[] = 'two.css';$stylesheets[] = 'three.css';
-
-   //  CDN by keyword or full URL
-    $stylesheets[] = '[cdnjs.cloudflare.com/ajax/libs/font-awesome](https://cdnjs.cloudflare.com/ajax/libs/font-awesome)';
-    
-    return $stylesheets;
-});
 
 // Hook Add Script Merge | These always end of the </body Tag>
 add_filter( 'wpninetyplus_merge_script', function( $scripts ) {
