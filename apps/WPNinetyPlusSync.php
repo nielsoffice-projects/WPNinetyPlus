@@ -203,7 +203,7 @@ class WPNinetyPlusSync {
 
 
         // --- 3. BUILD THE JAVASCRIPT INJECTION SCRIPT ---
-        $assets_block .= '<script>';
+        $assets_block .= '<script defer>';
         $assets_block .= 'window.addEventListener("load", function() {';
         
         // Loading Period Logic via Filter (Responsive Timeout)

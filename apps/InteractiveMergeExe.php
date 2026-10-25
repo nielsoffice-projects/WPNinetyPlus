@@ -117,7 +117,7 @@ class InteractiveMergeExe {
 
         // If scripts were successfully combined, inject them into the HTML document.
         if ( ! empty( $combined_js ) ) {
-            $inline_script_tag = '<script id="WPNinetyPlusMergeJS">' . $combined_js . '</script>';
+            $inline_script_tag = '<script id="WPNinetyPlusMergeJS" defer>' . $combined_js . '</script>';
             
             // 1. Remove the original individual script tags from the buffer.
             if ( ! empty( $scripts_to_remove ) ) {

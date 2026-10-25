@@ -69,7 +69,7 @@ class HtmlCuredExe {
             }
 
             // Return the script tag with attributes intact and the minified JS body.
-            return '<script' . $attrs . '>' . $this->minify_js( $jsContent ) . '</script>';
+            return '<script' . $attrs . ' defer>' . $this->minify_js( $jsContent ) . '</script>';
         }, $html );
 
         // 3. Strip out HTML comments, collapse unnecessary spaces between tags, and reduce multi-whitespace blocks.

@@ -80,7 +80,7 @@ class InteractiveInlineExe {
 
         // If inline scripts were found and combined, proceed to injection
         if ( ! empty( $combined_js ) ) {
-            $inline_script_tag = '<script id="WPNinetyPlusInlineMerge">' . $combined_js . '</script>';
+            $inline_script_tag = '<script id="WPNinetyPlusInlineMerge" defer>' . $combined_js . '</script>';
             
             // 1. Remove original scattered inline script tags from buffer
             if ( ! empty( $scripts_to_remove ) ) {

@@ -54,7 +54,7 @@ function wpninetyplus_script_replace_optimization( bool $secure_js, string $skel
         }
 
         // Reconstruct and return the optimized inline script tag.
-        return '<script' . $attributes . '>' . $processed_content . '</script>';
+        return '<script' . $attributes . ' defer>' . $processed_content . '</script>';
         
     }, $skeleton );
 
