@@ -22,7 +22,7 @@
     - [Hook](#hook)
     - [Hook](#hook-1)
     - [Hook](#hook-2)
-    - [Hook](#hook-3)
+    - [Hook | CLIENT\_HTML](#hook--client_html)
   - [Enable Debugging Mode](#enable-debugging-mode)
     - [⚠️ Advanced Usage Warning](#️-advanced-usage-warning)
     - [Recommended Usage](#recommended-usage)
@@ -213,7 +213,7 @@ add_filter( 'wpninetyplus_inline_script', function( $position ) {
 <details>
 <summary><b>OPTIMIZED_CLIENT_HTML</b></summary>
 
-### Hook
+### Hook | CLIENT_HTML
 
 ```
 OPTIMIZED_CLIENT_HTML = false
