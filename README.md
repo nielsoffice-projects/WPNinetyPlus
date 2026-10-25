@@ -19,6 +19,7 @@
   - [🧐 Overview](#-overview)
   - [⚙️ Configuration (`.env`)](#️-configuration-env)
   - [🧩 Hook Documentation](#-hook-documentation)
+    - [Hooks | MANAGER](#hooks--manager)
     - [Hooks | SYNCASSETS](#hooks--syncassets)
     - [Hook | INTERMERGE](#hook--intermerge)
     - [Hook | INTERMERGE](#hook--intermerge-1)
@@ -72,6 +73,40 @@ WPNINETYPLUS_LAYMERGEINLINE = true
 ---
 
 ## 🧩 Hook Documentation
+
+<details>
+<summary><b>WPNINETYPLUS_MANAGER</b></summary>
+
+### Hooks | MANAGER
+```env
+WPNINETYPLUS_MANAGER = false
+```
+
+```php
+add_filter( 'wpninetyplus_temporary', function( $selectors ) {
+  return array(
+          '.content-blocks .content-blocks__item',
+          '#mobile-menu-btn',
+          '.marketingHeroBackground'
+      );
+});
+
+add_filter( 'wpninetyplus_loading_period', function( $js_string ) {
+   return 'window.innerWidth <= 680 ? 4000 : (window.innerWidth <= 2014 ? 3500 : 2500)';
+ });
+
+add_filter( 'wpninetyplus_disregard_assets', function( $disregarded ) {
+    $disregarded[] = 'jquery.min.js?ver=3.7.1:2';
+    return $disregarded;
+});
+
+add_filter( 'wpninetyplus_disregard_inlineassets', function( $disregarded ) {
+    $disregarded[] = 'jquery-js-after';
+
+    return $disregarded;
+});
+```
+</details>
 
 <details>
 <summary><b>WPNINETYPLUS_SYNCASSETS</b></summary>
