@@ -67,3 +67,98 @@ WPNINETYPLUS_LAYMERGEINLINE = true
 | **`WPNinetyPlusGetImages()`** | Catalogs and analyzes all image assets, verifying next-gen format usage, proper sizing, and lazy-loading implementation. | Image Optimization |
 | **`WPNinetyPlusGetVideos()`** | Scans, inspects, and audits embedded and hosted video content, reviewing compression, streaming efficiency, and lazy-loading policies to eliminate bandwidth bloat. | Video & Media Optimization |
 | **`WPNinetyPlusMetaData()`** | Scans and validates meta tags, Open Graph data, and technical SEO markers to ensure search engine readiness and social share efficiency. | SEO & Metadata |
+
+
+# WPNinetyPlus (90+) (WPPlugin/PHPLibrary)
+WordPress Optimization 90+ Grade Speed Insight 
+
+```PHP
+// Hook Add Style Merge  | theme directory functions.php
+
+add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
+   
+    $stylesheets[] = 'two.css';$stylesheets[] = 'three.css';
+
+   //  CDN by keyword or full URL
+    $stylesheets[] = '[cdnjs.cloudflare.com/ajax/libs/font-awesome](https://cdnjs.cloudflare.com/ajax/libs/font-awesome)';
+    
+    return $stylesheets;
+});
+
+// Hook Add Script Merge | These always end of the </body Tag>
+add_filter( 'wpninetyplus_merge_script', function( $scripts ) {
+    
+    // 1. Local JS file name
+    $scripts[] = 'custom-script.js';  // 2. External CDN JS URL or keyword$scripts[] = '[cdnjs.cloudflare.com/ajax/libs/jquery](https://cdnjs.cloudflare.com/ajax/libs/jquery)';
+    
+    // 3. Inline script ID (e.g., <script id="inline_ids">...)
+    $scripts[] = 'inline_ids';
+    
+    return $scripts;
+});
+
+// inline scripts to the end of the <head> (General Inline)
+// WPNINETYPLUS_INTERMERGE = false
+add_filter( 'wpninetyplus_inline_script', function( $position ) {
+    return 'head'; 
+});
+
+// inline scripts to the end of the <body> (Default | General Inline)
+// WPNINETYPLUS_INTERMERGE = false
+add_filter( 'wpninetyplus_inline_script', function( $position ) {
+    return 'footer'; 
+});
+
+// Ignore Assets
+add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
+    
+    $ignore_ids[] = 'my-custom-script-id';
+    
+    return $ignore_ids;
+});
+
+Hooks/Filters: 
+
+
+/**
+- Define Keywords / Assets to Delay
+ */
+add_filter( 'wpninetyplus_sync_assets', function( $keywords ) {
+    return array(
+        // Add your target asset paths or strings here
+    );
+});
+
+/**
+- 2. Define Font Preloads
+ */
+add_filter( 'wpninetyplus_sync_font_preloads', function( $preload_block,$theme_uri ) {
+    return $preload_block;
+}, 10, 2 );
+
+/**
+- 3. Define Dynamic Loading Timeout Period Logic
+ */
+add_filter( 'wpninetyplus_loading_period', function( $default_expression ) {
+   return $preload_block;
+});
+
+add_filter( 'wpninetyplus_sync_loading_period', function( $js_string ) {
+    return 'var loadingPeriod = window.innerWidth <= 680 ? 2000 : (window.innerWidth <= 2014 ? 2500 : 2000);';
+});
+
+/**
+- 4. Define Conditional Page Assets, Styles, and Scripts
+ */
+add_filter( 'wpninetyplus_sync_assets_conditional', function( $block, $theme_uri,$version ) {
+    return $block;
+}, 10, 3 );
+
+/**
+- 5. Define Selectors to Remove .r-temporary Class From
+ */
+add_filter( 'wpninetyplus_sync_temporary', function( $selectors ) {
+    return array(
+        // Add selectors here, e.g., '.content-blocks .content-blocks__item'
+    );
+});
