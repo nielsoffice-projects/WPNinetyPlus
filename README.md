@@ -20,6 +20,13 @@
   - [⚙️ Configuration (`.env`)](#️-configuration-env)
     - [Hooks](#hooks)
   - [Enable Debugging Mode](#enable-debugging-mode)
+- [WPNinetyPlus (90+)](#wpninetyplus-90)
+    - [⚠️ Advanced Usage Warning](#️-advanced-usage-warning)
+    - [Recommended Usage](#recommended-usage)
+    - [Acknowledgments](#acknowledgments)
+    - [License](#license)
+    - [Support the Project](#support-the-project)
+      - [Donation Options](#donation-options)
 
 ---
 
@@ -200,15 +207,60 @@ add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
 
 
 
-<b>Thanks To:</b>
-<br>Github : To allow me to upload my WordPress Plugin.
-<br>php.net : The opportunity to develop using corePHP
-<br>WordPress : The opportunity to develop plugins using corePHP/WPCodex - Plugin/Library
-<br>
-<br><b>LICENSE BY GNU 3.0</b>
-<br>THE SOFTWARE IS PROVIDED “AS IS,” WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL THE AUTHORS, DEVELOPERS, CONTRIBUTORS, OR COPYRIGHT HOLDERS OF THIS WORDPRESS PLUGIN BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE, THE USE OR OTHER DEALINGS IN THE SOFTWARE, OR ANY MODIFICATION, DISTRIBUTION, OR INTEGRATION OF THE PLUGIN WITH WORDPRESS OR OTHER SOFTWARE.
+<div align="center">
 
-<br>Would you like me to treat a cake and coffee ?
-<br>Become a donor, Because with you! We can build more...
-<br><b>GCash</b> : +639650332900
-<br><b>Paypal account</b>: syncdevprojects@gmail.com
+# WPNinetyPlus (90+)
+**Built for developers. Focused on performance. Inspired by open source.**
+
+</div>
+
+---
+
+### ⚠️ Advanced Usage Warning
+These filters may affect when resources load, how the browser renders the page, or how dynamic content behaves. Validate the generated HTML and test interactive components after making changes.
+
+---
+
+### Recommended Usage
+For the best results when integrating WPNinetyPlus into a WordPress website:
+1. **Start with a baseline.** Run a performance test before enabling additional optimization options.
+2. **Enable features incrementally.** Introduce one optimization at a time so that any regressions are easier to identify.
+3. **Respect dependencies.** Avoid merging scripts that require a specific loading order unless the merge process preserves it.
+4. **Optimize critical resources.** Prioritize the CSS, JavaScript, images, and fonts required for the initial viewport.
+5. **Test dynamic functionality.** Verify navigation, forms, menus, third-party integrations, and interactive components.
+6. **Measure real results.** Compare PageSpeed Insights and Core Web Vitals before and after each significant change.
+7. **Keep a rollback path.** Maintain a tested configuration and backup before enabling advanced transformations in production.
+
+> Remember that aggressive optimization is not always better. The objective is to improve real-world performance while preserving website functionality and compatibility.
+
+---
+
+### Acknowledgments
+WPNinetyPlus is made possible by the tools, documentation, and open-source ecosystem that support WordPress development. 
+
+Special thanks to:
+* **GitHub** — For providing a platform to host, maintain, and share this project.
+* **PHP** — For the language and documentation that support PHP development.
+* **WordPress** — For the publishing platform, plugin architecture, and developer documentation that make WordPress extensions possible.
+
+Thank you to everyone who contributes to open-source development and website performance optimization.
+
+---
+
+### License
+**GNU General Public License v3.0**
+
+THE SOFTWARE IS PROVIDED “AS IS,” WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL THE AUTHORS, DEVELOPERS, CONTRIBUTORS, OR COPYRIGHT HOLDERS OF THIS WORDPRESS PLUGIN BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE, THE USE OR OTHER DEALINGS IN THE SOFTWARE, OR ANY MODIFICATION, DISTRIBUTION, OR INTEGRATION OF THE PLUGIN WITH WORDPRESS OR OTHER SOFTWARE.
+
+---
+
+### Support the Project
+☕ Would you like to treat me to a coffee or a cake?
+
+Your support helps make continued development, maintenance, and new optimization features possible. Every contribution, no matter the size, is greatly appreciated. Together, we can build better tools for the WordPress community.
+
+#### Donation Options
+* **GCash:** `+639650332900`
+* **PayPal:** `syncdevprojects@gmail.com`
+
+Thank you for supporting independent development and helping WPNinetyPlus grow.
