@@ -33,7 +33,7 @@ class InteractiveMergeExe {
      * @param string $buffer The raw HTML output buffer.
      * @return string        The modified HTML buffer with merged inline scripts.
      */
-    public function interactive_merge_one( string $buffer ) : string {
+    public function interactive_merge( string $buffer ) : string {
 
         if ( empty( $buffer ) ) {
             return $buffer;

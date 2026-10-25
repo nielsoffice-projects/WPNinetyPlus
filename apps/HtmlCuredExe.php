@@ -4,31 +4,10 @@
  * Description: Utility class to minify HTML, inline CSS, and inline JavaScript on the fly via output buffering.
  * Class HTMLCuredExe
  */
-class HTMLCuredExe {
 
-    /**
-     * Constructor.
-     * Hooks the output buffer initialization into WordPress execution lifecycle.
-     */
-    public function __construct() {
-        // Hook into 'template_redirect' to capture theme output before it's sent to the client browser
-        add_action('template_redirect', [$this, 'start_buffer']);
-    }
+namespace WPNinetyPlus;
 
-    /**
-     * Start the output buffer and pass the final HTML buffer to the minifier callback.
-     * 
-     * @return void
-     */
-    public function start_buffer() {
-        // Bypass minification on admin screens, AJAX calls, REST API endpoints, feeds, and embeds to prevent corruption
-        if (is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST) || is_feed() || (function_exists('is_embed') && is_embed())) {
-            return;
-        }
-
-        // Initialize output buffering with a callback targeting our minification method
-        ob_start([$this, 'minify_html']);
-    }
+class HtmlCuredExe {
 
     /**
      * Main HTML Minifier wrapper.
@@ -37,7 +16,7 @@ class HTMLCuredExe {
      * @param string $html The raw page output captured from the output buffer.
      * @return string      The cleaned and minified HTML string.
      */
-    public function minify_html($html) {
+    public function cured_client_html($html) {
         // Return early if the buffer payload is completely empty
         if (empty($html)) {
             return $html;

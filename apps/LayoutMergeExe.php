@@ -33,7 +33,7 @@ class LayoutMergeExe {
      * @param string $buffer The raw HTML output buffer.
      * @return string        The modified HTML buffer with merged inline styles.
      */
-    public function layout_merge_one( string $buffer ) : string {
+    public function layout_merge( string $buffer ) : string {
 
         if ( empty( $buffer ) ) {
             return $buffer;

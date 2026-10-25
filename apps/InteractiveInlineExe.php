@@ -24,7 +24,7 @@ if ( ! defined( 'WPINC' ) || ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class InteractiveInline {
+class InteractiveInlineExe {
 
     /**
      * Finds all generic inline script tags without a 'src' or 'id' attribute, 
@@ -35,7 +35,7 @@ class InteractiveInline {
      * @param string $buffer The raw HTML output buffer.
      * @return string        The modified HTML buffer.
      */
-    public function interactive_inline_one( string $buffer ) : string {
+    public function interactive_inline( string $buffer ) : string {
 
         if ( empty( $buffer ) ) {
             return $buffer;
