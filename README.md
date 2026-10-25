@@ -20,6 +20,7 @@
   - [⚙️ Configuration (`.env`)](#️-configuration-env)
     - [Hooks](#hooks)
     - [Hook](#hook)
+    - [Hook](#hook-1)
   - [Enable Debugging Mode](#enable-debugging-mode)
     - [⚠️ Advanced Usage Warning](#️-advanced-usage-warning)
     - [Recommended Usage](#recommended-usage)
@@ -153,19 +154,38 @@ add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
 
 </details>
 
-```PHP
 
+<details>
+<summary><b>WPNINETYPLUS_INTERMERGE</b></summary>
+
+### Hook
+
+```
+WPNINETYPLUS_INTERMERGE = false
+```
+
+```PHP
 // Hook Add Script Merge | These always end of the </body Tag>
 add_filter( 'wpninetyplus_merge_script', function( $scripts ) {
     
     // 1. Local JS file name
-    $scripts[] = 'custom-script.js';  // 2. External CDN JS URL or keyword$scripts[] = '[cdnjs.cloudflare.com/ajax/libs/jquery](https://cdnjs.cloudflare.com/ajax/libs/jquery)';
+    $scripts[] = 'custom-script.js';
+    
+    // 2. External CDN JS URL or keyword
+    $scripts[] = 'cdnjs.cloudflare.com/ajax/libs/jquery';
     
     // 3. Inline script ID (e.g., <script id="inline_ids">...)
     $scripts[] = 'inline_ids';
     
     return $scripts;
 });
+
+```
+
+</details>
+
+```PHP
+
 
 // inline scripts to the end of the <head> (General Inline)
 // WPNINETYPLUS_INTERMERGE = false
