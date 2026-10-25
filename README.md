@@ -50,7 +50,7 @@ WPNINETYPLUS_ISOLATE = true
 WPNINETYPLUS_INIT = false
 
 # Warning: Full Paint requires a standard HTML document structure 
-# using proper semantic tags (e.g., <head>, <body>, <header>, <main>, <section>, <footer>).
+# using proper semantic tags (e.g., <head>, <body>, <header>, <main>, <aside> <section>, <footer>).
 WPNINETYPLUS_FULLPAINT = true
 
 OPTIMIZED_CLIENT_HTML = true
