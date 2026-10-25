@@ -128,6 +128,28 @@ add_filter( 'wpninetyplus_sync_temporary', function( $selectors ) {
 </details>
 
 
+<details>
+<summary><b>OPTIMIZED_CLIENT_LMERGE</b></summary>
+
+```
+OPTIMIZED_CLIENT_LMERGE = false
+```
+
+```PHP
+// Hook Add Style Merge  | theme directory functions.php
+
+add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
+   
+    $stylesheets[] = 'two.css';$stylesheets[] = 'three.css';
+
+   //  CDN by keyword or full URL
+    $stylesheets[] = '[cdnjs.cloudflare.com/ajax/libs/font-awesome](https://cdnjs.cloudflare.com/ajax/libs/font-awesome)';
+    
+    return $stylesheets;
+});
+```
+
+</details>
 
 ```PHP
 // Hook Add Style Merge  | theme directory functions.php
