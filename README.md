@@ -21,7 +21,7 @@
     - [Hooks | SYNCASSETS](#hooks--syncassets)
     - [Hook | INTERMERGE](#hook--intermerge)
     - [Hook | INTERMERGE](#hook--intermerge-1)
-    - [Hook | INTERINLINE](#hook--interinline)
+    - [Hooks | INTERINLINE](#hooks--interinline)
     - [Hook | CLIENT\_HTML](#hook--client_html)
   - [Enable Isolation Mode](#enable-isolation-mode)
     - [⚠️ Advanced Usage Warning](#️-advanced-usage-warning)
@@ -189,7 +189,7 @@ add_filter( 'wpninetyplus_merge_script', function( $scripts ) {
 <details>
 <summary><b>WPNINETYPLUS_INTERINLINE</b></summary>
 
-### Hook | INTERINLINE
+### Hooks | INTERINLINE
 
 ```
 WPNINETYPLUS_INTERINLINE = false
