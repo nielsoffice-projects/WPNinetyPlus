@@ -196,13 +196,11 @@ WPNINETYPLUS_INTERINLINE = false
 
 ```PHP
 // inline scripts to the end of the <head> (General Inline)
-// WPNINETYPLUS_INTERMERGE = false
 add_filter( 'wpninetyplus_inline_script', function( $position ) {
     return 'head'; 
 });
 
 // inline scripts to the end of the <body> (Default | General Inline)
-// WPNINETYPLUS_INTERMERGE = false
 add_filter( 'wpninetyplus_inline_script', function( $position ) {
     return 'footer'; 
 });
