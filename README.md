@@ -5,7 +5,7 @@
 
 [![License: GNU GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![WordPress](https://img.shields.io/badge/WordPress-Plugin%20%2F%20Library-blue?logo=wordpress)](https://wordpress.org)
-[![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple?logo=php)](https://php.net)
+[![PHP](https://img.shields.io/badge/PHP8.5%2B-purple?logo=php)](https://php.net)
 
 *Achieve a 90+ Grade Speed Insight score effortlessly.*
 
