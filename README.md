@@ -214,18 +214,6 @@ add_filter( 'wpninetyplus_inline_script', function( $position ) {
 ```PHP
 
 
-// inline scripts to the end of the <head> (General Inline)
-//  = false
-add_filter( 'wpninetyplus_inline_script', function( $position ) {
-    return 'head'; 
-});
-
-// inline scripts to the end of the <body> (Default | General Inline)
-// WPNINETYPLUS_INTERMERGE = false
-add_filter( 'wpninetyplus_inline_script', function( $position ) {
-    return 'footer'; 
-});
-
 // Ignore Assets
 add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
     
