@@ -1,5 +1,6 @@
 <?php 
 
+dd_action('wp_head', fn() => print('<script id="interactive">document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>document.querySelectorAll(".wpninetyplus-lframe").forEach(e=>e.classList.remove("wpninetyplus-lframe")),200));</script>'), 5);
 
 add_filter( 'wpninetyplus_paint_optimization_rendered', 'wpninetyplus_paint_modifier', 10, 2 );
 
@@ -14,3 +15,4 @@ add_filter( 'wpninetyplus_paint_optimization_rendered', 'wpninetyplus_paint_modi
 function wpninetyplus_paint_modifier( string $skeleton, array $ids ) : string {
     return $skeleton;
 }
+
