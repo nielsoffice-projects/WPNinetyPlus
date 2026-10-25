@@ -26,8 +26,8 @@
     - [Hook | CLIENT\_HTML](#hook--client_html)
   - [🛡️ Isolation Mode Functions](#️-isolation-mode-functions)
   - [⚠️ Advanced Usage Warning](#️-advanced-usage-warning)
-  - [📈 Recommended Usage](#-recommended-usage)
-  - [🙏 Acknowledgments](#-acknowledgments)
+  - [Recommended Usage](#recommended-usage)
+  - [Acknowledgments](#acknowledgments)
   - [📝 License](#-license)
   - [☕ Support the Project](#-support-the-project)
     - [Donation Options](#donation-options)
@@ -233,7 +233,7 @@ add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
 
 ---
 
-## 📈 Recommended Usage
+## Recommended Usage
 
 For the best results when integrating WPNinetyPlus into a WordPress website:
 1. **Start with a baseline:** Run a performance test before enabling additional optimization options.
@@ -248,7 +248,7 @@ For the best results when integrating WPNinetyPlus into a WordPress website:
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 WPNinetyPlus is made possible by the tools, documentation, and open-source ecosystem that support WordPress development. 
 
