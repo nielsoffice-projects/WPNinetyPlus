@@ -114,11 +114,14 @@ add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
     return $ignore_ids;
 });
 
-Hooks/Filters: 
+```
 
+```PHP
+
+// Hooks/Filters: 
 
 /**
-- Define Keywords / Assets to Delay
+ * Define Keywords / Assets to Delay
  */
 add_filter( 'wpninetyplus_sync_assets', function( $keywords ) {
     return array(
@@ -127,14 +130,14 @@ add_filter( 'wpninetyplus_sync_assets', function( $keywords ) {
 });
 
 /**
-- 2. Define Font Preloads
+ * 2. Define Font Preloads
  */
 add_filter( 'wpninetyplus_sync_font_preloads', function( $preload_block,$theme_uri ) {
     return $preload_block;
 }, 10, 2 );
 
 /**
-- 3. Define Dynamic Loading Timeout Period Logic
+ * 3. Define Dynamic Loading Timeout Period Logic
  */
 add_filter( 'wpninetyplus_loading_period', function( $default_expression ) {
    return $preload_block;
@@ -145,17 +148,35 @@ add_filter( 'wpninetyplus_sync_loading_period', function( $js_string ) {
 });
 
 /**
-- 4. Define Conditional Page Assets, Styles, and Scripts
+ *  4. Define Conditional Page Assets, Styles, and Scripts
  */
 add_filter( 'wpninetyplus_sync_assets_conditional', function( $block, $theme_uri,$version ) {
     return $block;
 }, 10, 3 );
 
 /**
-- 5. Define Selectors to Remove .r-temporary Class From
+ * 5. Define Selectors to Remove .r-temporary Class From
  */
 add_filter( 'wpninetyplus_sync_temporary', function( $selectors ) {
     return array(
         // Add selectors here, e.g., '.content-blocks .content-blocks__item'
     );
 });
+
+
+```
+
+
+
+<b>Thanks To:</b>
+<br>Github : To allow me to upload my WordPress Plugin.
+<br>php.net : The opportunity to develop using corePHP
+<br>WordPress : The opportunity to develop plugins using corePHP/WPCodex - Plugin/Library
+<br>
+<br><b>LICENSE BY GNU 3.0</b>
+<br>THE SOFTWARE IS PROVIDED “AS IS,” WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL THE AUTHORS, DEVELOPERS, CONTRIBUTORS, OR COPYRIGHT HOLDERS OF THIS WORDPRESS PLUGIN BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE, THE USE OR OTHER DEALINGS IN THE SOFTWARE, OR ANY MODIFICATION, DISTRIBUTION, OR INTEGRATION OF THE PLUGIN WITH WORDPRESS OR OTHER SOFTWARE.
+
+<br>Would you like me to treat a cake and coffee ?
+<br>Become a donor, Because with you! We can build more...
+<br><b>GCash</b> : +639650332900
+<br><b>Paypal account</b>: syncdevprojects@gmail.com
