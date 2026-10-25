@@ -18,10 +18,10 @@
   - [📌 Table of Contents](#-table-of-contents)
   - [🧐 Overview](#-overview)
   - [⚙️ Configuration (`.env`)](#️-configuration-env)
-    - [Hooks](#hooks)
+    - [Hooks | SYNCASSETS](#hooks--syncassets)
+    - [Hook | INTERMERGE](#hook--intermerge)
     - [Hook](#hook)
-    - [Hook](#hook-1)
-    - [Hook](#hook-2)
+    - [Hook | INTERINLINE](#hook--interinline)
     - [Hook | CLIENT\_HTML](#hook--client_html)
   - [Enable Debugging Mode](#enable-debugging-mode)
     - [⚠️ Advanced Usage Warning](#️-advanced-usage-warning)
@@ -74,7 +74,7 @@ WPNINETYPLUS_LAYMERGEINLINE = true
 <details>
 <summary><b>WPNINETYPLUS_SYNCASSETS</b></summary>
 
-### Hooks
+### Hooks | SYNCASSETS
 
 ```
 WPNINETYPLUS_SYNCASSETS = false
@@ -133,7 +133,7 @@ add_filter( 'wpninetyplus_sync_temporary', function( $selectors ) {
 <details>
 <summary><b>OPTIMIZED_CLIENT_LMERGE</b></summary>
 
-### Hook
+### Hook | INTERMERGE
 
 ```
 OPTIMIZED_CLIENT_LMERGE = false
@@ -189,7 +189,7 @@ add_filter( 'wpninetyplus_merge_script', function( $scripts ) {
 <details>
 <summary><b>WPNINETYPLUS_INTERINLINE</b></summary>
 
-### Hook
+### Hook | INTERINLINE
 
 ```
 WPNINETYPLUS_INTERINLINE = false
