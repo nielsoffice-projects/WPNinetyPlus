@@ -119,4 +119,4 @@ define( 'WPNPIM', env( 'WPNINETYPLUS_INTERMERGE' ) === true ? false : true );
  *
  * @since Oct 25, 2026
  */
-define( 'WPNPMI', env( 'WPNINETYPLUS_MERGEINLINE' ) === true ? false : true );
+define( 'WPNPMI', env( 'WPNINETYPLUS_LAYMERGEINLINE' ) === true ? false : true );

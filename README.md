@@ -62,6 +62,10 @@ WPNINETYPLUS_SYNCASSETS = true
 WPNINETYPLUS_ISOLATE = true
 WPNINETYPLUS_INIT = false
 
+/**
+ * Warning: Full Paint requires a standard HTML document structure 
+ * using proper semantic tags (e.g., <head>, <body>, <header>, <main>, <section>, <footer>).
+ */
 WPNINETYPLUS_FULLPAINT = true 
 
 OPTIMIZED_CLIENT_HTML = true
@@ -69,6 +73,15 @@ OPTIMIZED_CLIENT_JAVASCRIPT = true
 OPTIMIZED_CLIENT_CSS = true
 OPTIMIZED_CLIENT_LMERGE = true
 
+/**
+ * Warning: These advanced options increase file complexity and can 
+ * negatively impact website performance. They are not recommended 
+ * for general use and are intended only for specific edge cases.
+ */
+WPNINETYPLUS_CUREDCLIENTHTML = true
+WPNINETYPLUS_INTERINLINE = true
+WPNINETYPLUS_INTERMERGE = true
+WPNINETYPLUS_LAYMERGEINLINE = true
 
 ```
 
