@@ -100,11 +100,6 @@ add_filter( 'wpninetyplus_disregard_assets', function( $disregarded ) {
     return $disregarded;
 });
 
-add_filter( 'wpninetyplus_disregard_inlineassets', function( $disregarded ) {
-    $disregarded[] = 'jquery-js-after';
-
-    return $disregarded;
-});
 ```
 </details>
 
