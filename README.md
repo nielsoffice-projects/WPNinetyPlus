@@ -23,7 +23,7 @@
     - [Hook | INTERMERGE](#hook--intermerge-1)
     - [Hook | INTERINLINE](#hook--interinline)
     - [Hook | CLIENT\_HTML](#hook--client_html)
-  - [Enable Debugging Mode](#enable-debugging-mode)
+  - [Enable Isolation Mode](#enable-isolation-mode)
     - [⚠️ Advanced Usage Warning](#️-advanced-usage-warning)
     - [Recommended Usage](#recommended-usage)
     - [Acknowledgments](#acknowledgments)
@@ -230,7 +230,7 @@ add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
 </details>
 
 
-## Enable Debugging Mode
+## Enable Isolation Mode
 
 | Function | Description | Focus Area |
 | :--- | :--- | :--- |
