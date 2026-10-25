@@ -138,7 +138,8 @@ OPTIMIZED_CLIENT_LMERGE = false
 
 add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
    
-    $stylesheets[] = 'two.css';$stylesheets[] = 'three.css';
+    $stylesheets[] = 'two.css';
+    $stylesheets[] = 'three.css';
 
    //  CDN by keyword or full URL
     $stylesheets[] = '[cdnjs.cloudflare.com/ajax/libs/font-awesome](https://cdnjs.cloudflare.com/ajax/libs/font-awesome)';
