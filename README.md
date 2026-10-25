@@ -34,7 +34,7 @@
     - [Hook | INTERMERGE](#hook--intermerge-1)
     - [Hooks | INTERINLINE](#hooks--interinline)
     - [Hook | CLIENT\_HTML](#hook--client_html)
-  - [🛡️ Isolation Mode Functions](#️-isolation-mode-functions)
+- [🛡️ Isolation Mode Functions](#️-isolation-mode-functions)
   - [⚠️ Advanced Usage Warning](#️-advanced-usage-warning)
   - [📈 Recommended Usage](#-recommended-usage)
   - [💡 Acknowledgments](#-acknowledgments)
@@ -252,7 +252,7 @@ add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
 
 ---
 
-## 🛡️ Isolation Mode Functions
+# 🛡️ Isolation Mode Functions
 
 | Function | Description | Focus Area |
 | :--- | :--- | :--- |
