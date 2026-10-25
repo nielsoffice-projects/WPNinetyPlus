@@ -69,6 +69,20 @@ WPNINETYPLUS_LAYMERGEINLINE = true
 | **`WPNinetyPlusMetaData()`** | Scans and validates meta tags, Open Graph data, and technical SEO markers to ensure search engine readiness and social share efficiency. | SEO & Metadata |
 
 
+
+<details>
+<summary><b>Click to expand for details!</b></summary>
+
+### This is hidden content
+You can put text, code blocks, or even **tables** inside an accordion!
+
+* Item one
+* Item two
+
+</details>
+
+
+
 ```PHP
 // Hook Add Style Merge  | theme directory functions.php
 
