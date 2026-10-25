@@ -18,7 +18,7 @@ if ( ! defined( 'WPINC' ) || ! defined( 'ABSPATH' ) ) {
  * 
  * Manages output buffer-based HTML minification, inline style optimization, 
  * and secure JavaScript handling with filter support for excluded assets.
- *
+ * 
  * @since 1.0.0
  */
 class HtmlCuredExe {
@@ -27,7 +27,7 @@ class HtmlCuredExe {
      * Main HTML Minifier wrapper.
      * Processes raw HTML output, delegating script and style blocks to their respective parsers 
      * while respecting the 'wpninetyplus_cured_assets' filter.
-     *
+     * 
      * @since 1.0.0
      * @param string $html The raw page output captured from the output buffer.
      * @return string      The cleaned and minified HTML string.
@@ -40,11 +40,11 @@ class HtmlCuredExe {
 
         /**
          * Filters the list of assets to ignore during optimization.
-         *
+         * 
          * @since 1.0.0
-         * @param array $default_ids Default empty array of IDs.
+         * @param array $default_ids Default array of ignored IDs.
          */
-        $ignore_ids = apply_filters( 'wpninetyplus_cured_assets', [] );
+        $ignore_ids = apply_filters( 'wpninetyplus_cured_assets', [ 'interactive' ] );
 
         // 1. Locate and minify all inline CSS content encapsulated inside <style> tags.
         $html = preg_replace_callback( '~<style\b[^>]*>([\s\S]*?)<\/style>~i', function( $matches ) {
@@ -61,15 +61,21 @@ class HtmlCuredExe {
                 return $matches[0];
             }
 
-            // Check if any of the ignored IDs are present in the script's attributes (e.g., id="my-custom-script-id").
+            // Check if any of the ignored IDs are present in the script's attributes (e.g., id="interactive").
             foreach ( $ignore_ids as $id ) {
                 if ( preg_match( '/id=["\']' . preg_quote( $id, '/' ) . '["\']/i', $attrs ) ) {
-                    return $matches[0]; // Skip minification for this script!
+                    return $matches[0]; // Skip minification and modification entirely for this script!
                 }
             }
 
-            // Return the script tag with attributes intact and the minified JS body.
-            return '<script' . $attrs . ' defer>' . $this->minify_js( $jsContent ) . '</script>';
+            // Only append 'defer' if it isn't already present in the script's attributes.
+            $defer_attr = '';
+            if ( false === stripos( $attrs, 'defer' ) && false === stripos( $attrs, 'async' ) ) {
+                $defer_attr = ' defer';
+            }
+
+            // Return the script tag with original attributes, safe defer check, and minified JS body.
+            return '<script' . $attrs . $defer_attr . '>' . $this->minify_js( $jsContent ) . '</script>';
         }, $html );
 
         // 3. Strip out HTML comments, collapse unnecessary spaces between tags, and reduce multi-whitespace blocks.
@@ -83,7 +89,7 @@ class HtmlCuredExe {
     /**
      * CSS Minifier engine.
      * Strips block comments, collapses spacing, and removes redundant syntax characters.
-     *
+     * 
      * @since 1.0.0
      * @param string $css Raw CSS block code.
      * @return string     Minified CSS block code.
@@ -99,7 +105,7 @@ class HtmlCuredExe {
     /**
      * JS Minifier engine.
      * Strips block/inline comments, compresses whitespace, and normalizes operator spacing.
-     *
+     * 
      * @since 1.0.0
      * @param string $js Raw JavaScript block code.
      * @return string    Minified JavaScript block code.
