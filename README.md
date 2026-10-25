@@ -55,6 +55,7 @@ WPNINETYPLUS_INTERINLINE = true
 WPNINETYPLUS_INTERMERGE = true
 WPNINETYPLUS_LAYMERGEINLINE = true
 
+```
 
 
 | Function | Description | Focus Area |
