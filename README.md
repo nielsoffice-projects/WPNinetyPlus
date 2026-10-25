@@ -15,7 +15,7 @@ add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
     return $stylesheets;
 });
 
-// Hook Add Script Merge
+// Hook Add Script Merge | These always end of the </body Tag>
 add_filter( 'wpninetyplus_merge_script', function( $scripts ) {
     
     // 1. Local JS file name
@@ -30,12 +30,14 @@ add_filter( 'wpninetyplus_merge_script', function( $scripts ) {
     return $scripts;
 });
 
-// inline scripts to the end of the <head>
+// inline scripts to the end of the <head> (General Inline)
+// WPNINETYPLUS_INTERMERGE = false
 add_filter( 'wpninetyplus_inline_script', function( $position ) {
     return 'head'; 
 });
 
-// inline scripts to the end of the <body> (Default)
+// inline scripts to the end of the <body> (Default | General Inline)
+// WPNINETYPLUS_INTERMERGE = false
 add_filter( 'wpninetyplus_inline_script', function( $position ) {
     return 'footer'; 
 });
