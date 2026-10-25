@@ -20,7 +20,6 @@
   - [⚙️ Configuration (`.env`)](#️-configuration-env)
     - [Hooks](#hooks)
   - [Enable Debugging Mode](#enable-debugging-mode)
-- [WPNinetyPlus (90+)](#wpninetyplus-90)
     - [⚠️ Advanced Usage Warning](#️-advanced-usage-warning)
     - [Recommended Usage](#recommended-usage)
     - [Acknowledgments](#acknowledgments)
@@ -206,13 +205,6 @@ add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
 | **`WPNinetyPlusMetaData()`** | Scans and validates meta tags, Open Graph data, and technical SEO markers to ensure search engine readiness and social share efficiency. | SEO & Metadata |
 
 
-
-<div align="center">
-
-# WPNinetyPlus (90+)
-**Built for developers. Focused on performance. Inspired by open source.**
-
-</div>
 
 ---
 
