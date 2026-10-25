@@ -20,7 +20,7 @@
   - [⚙️ Configuration (`.env`)](#️-configuration-env)
     - [Hooks | SYNCASSETS](#hooks--syncassets)
     - [Hook | INTERMERGE](#hook--intermerge)
-    - [Hook](#hook)
+    - [Hook | INTERMERGE](#hook--intermerge-1)
     - [Hook | INTERINLINE](#hook--interinline)
     - [Hook | CLIENT\_HTML](#hook--client_html)
   - [Enable Debugging Mode](#enable-debugging-mode)
@@ -160,7 +160,7 @@ add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
 <details>
 <summary><b>WPNINETYPLUS_INTERMERGE</b></summary>
 
-### Hook
+### Hook | INTERMERGE
 
 ```
 WPNINETYPLUS_INTERMERGE = false
