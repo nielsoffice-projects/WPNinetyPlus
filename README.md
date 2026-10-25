@@ -54,3 +54,15 @@ WPNINETYPLUS_CUREDCLIENTHTML = true
 WPNINETYPLUS_INTERINLINE = true
 WPNINETYPLUS_INTERMERGE = true
 WPNINETYPLUS_LAYMERGEINLINE = true
+
+
+
+| Function | Description | Focus Area |
+| :--- | :--- | :--- |
+| **`WPNinetyPlus()`** | Executes a comprehensive, full-site performance audit to identify bottlenecks and elevate overall Core Web Vitals. | Full Website Audit |
+| **`WPNinetyPlusAssetsInteractive()`** | Deep-dives into JavaScript execution, script loading behavior, and interactivity bottlenecks to minimize Total Blocking Time (TBT). | JavaScript Optimization |
+| **`WPNinetyPlusAsstesLayout()`** | Analyzes CSS delivery, uncovers render-blocking stylesheets, and optimizes layout shifts for smoother rendering. | CSS & Layout Performance |
+| **`WPNinetyPlusAssetsPaint()`** | Audits typography delivery, web fonts, and favicons to ensure fast First Contentful Paint (FCP) and prevent flash of unstyled text. | Fonts & Visual Elements |
+| **`WPNinetyPlusGetImages()`** | Catalogs and analyzes all image assets, verifying next-gen format usage, proper sizing, and lazy-loading implementation. | Image Optimization |
+| **`WPNinetyPlusGetVideos()`** | Scans, inspects, and audits embedded and hosted video content, reviewing compression, streaming efficiency, and lazy-loading policies to eliminate bandwidth bloat. | Video & Media Optimization |
+| **`WPNinetyPlusMetaData()`** | Scans and validates meta tags, Open Graph data, and technical SEO markers to ensure search engine readiness and social share efficiency. | SEO & Metadata |
