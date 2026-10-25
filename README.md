@@ -39,7 +39,11 @@
 For the Free Version (no GUI), place your configuration in the plugin directory using an `.env` file:
 
 ```env
+
+# Warning: Manager applicable to use for FullStackDevelopment
+# Build Assets, Tailwind, Webpack, etc. 
 WPNINETYPLUS_MANAGER = true
+
 WPNINETYPLUS_SYNCASSETS = true
 
 WPNINETYPLUS_ISOLATE = true
