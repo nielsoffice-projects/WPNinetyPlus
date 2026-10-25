@@ -73,10 +73,12 @@ WPNINETYPLUS_LAYMERGEINLINE = true
 <summary><b>WPNINETYPLUS_SYNCASSETS</b></summary>
 
 ### Hooks
+
 ```
 WPNINETYPLUS_SYNCASSETS = false
 
 ```
+
 ```PHP
 /**
  * Define Keywords / Assets to Delay
@@ -123,7 +125,6 @@ add_filter( 'wpninetyplus_sync_temporary', function( $selectors ) {
 
 
 ```
-
 
 </details>
 
