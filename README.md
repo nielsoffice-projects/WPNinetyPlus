@@ -69,9 +69,6 @@ WPNINETYPLUS_LAYMERGEINLINE = true
 | **`WPNinetyPlusMetaData()`** | Scans and validates meta tags, Open Graph data, and technical SEO markers to ensure search engine readiness and social share efficiency. | SEO & Metadata |
 
 
-# WPNinetyPlus (90+) (WPPlugin/PHPLibrary)
-WordPress Optimization 90+ Grade Speed Insight 
-
 ```PHP
 // Hook Add Style Merge  | theme directory functions.php
 
