@@ -22,6 +22,7 @@
     - [Hook](#hook)
     - [Hook](#hook-1)
     - [Hook](#hook-2)
+    - [Hook](#hook-3)
   - [Enable Debugging Mode](#enable-debugging-mode)
     - [⚠️ Advanced Usage Warning](#️-advanced-usage-warning)
     - [Recommended Usage](#recommended-usage)
@@ -209,20 +210,25 @@ add_filter( 'wpninetyplus_inline_script', function( $position ) {
 </details>
 
 
+<details>
+<summary><b>OPTIMIZED_CLIENT_HTML</b></summary>
 
+### Hook
+
+```
+OPTIMIZED_CLIENT_HTML = false
+```
 
 ```PHP
-
-
-// Ignore Assets
 add_filter( 'wpninetyplus_cured_assets', function( $ignore_ids ) {
     
     $ignore_ids[] = 'my-custom-script-id';
     
     return $ignore_ids;
 });
-
 ```
+</details>
+
 
 ## Enable Debugging Mode
 
