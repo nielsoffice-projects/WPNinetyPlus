@@ -1,6 +1,7 @@
 <?php 
 
-add_action('wp_head', fn() => print('<script id="interactive" defer>document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>document.querySelectorAll(".wpninetyplus-lframe").forEach(e=>e.classList.remove("wpninetyplus-lframe")),200));</script>'), 5);
+
+add_action('wp_head', fn() => print('<script id="interactive" defer>document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>document.querySelectorAll(".wpninetyplus-lframe").forEach(e=>e.classList.remove("wpninetyplus-lframe")),200));' . do_action('wpninetyplus_safe_js') . '</script>'), 5);
 
 add_filter( 'wpninetyplus_paint_optimization_rendered', 'wpninetyplus_paint_modifier', 10, 2 );
 
