@@ -185,6 +185,9 @@ add_filter( 'wpninetyplus_merge_style', function( $stylesheets ) {
     
     return $stylesheets;
 });
+
+add_action('wpninetyplus_safe_js', fn() => print('console.log("Future script here!");'));
+
 ```
 </details>
 
