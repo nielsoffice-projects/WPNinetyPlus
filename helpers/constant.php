@@ -120,3 +120,11 @@ define( 'WPNPIM', env( 'WPNINETYPLUS_INTERMERGE' ) === true ? false : true );
  * @since Oct 25, 2026
  */
 define( 'WPNPMI', env( 'WPNINETYPLUS_LAYMERGEINLINE' ) === true ? false : true );
+
+/**
+ * Enables or disables WPNinetyPlus Layout Merge Inline feature on the client side.
+ *
+ * @since Nov 9, 2026
+ */
+define( 'WPNSI', env( 'WPNINETYPLUS_SYNCINTERACTIVE' ) === true ? false : true );
+

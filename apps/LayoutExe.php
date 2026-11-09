@@ -37,16 +37,20 @@ class LayoutExe {
             return $layout;
         }
 
-        // Wipe out all CSS multi-line comments (/* ... */).
-        $layout = preg_replace( '!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $layout );
+        // 1. Strip CSS block comments (/* ... */) completely, including text inside.
+        $layout = preg_replace( '~/\*[\s\S]*?\*/~', '', $layout );
 
-        // Normalize all line breaks, tabs, and multiple spaces into a single space.
-        $layout = preg_replace( '/\s+/', ' ', $layout );
+        // 2. Collapse multiple spaces, tabs, and newlines into a single space.
+        $layout = preg_replace( '~\s+~', ' ', $layout );
 
-        // Remove unnecessary spaces around core CSS syntax characters and delimiters.
-        $search  = [ ' ;', '; ', ' {', '{ ', ' }', '} ', ' :', ': ', ' ,', ', ' ];
-        $replace = [ ';', ';', '{', '{', '}', '}', ':', ':', ',', ',' ];
-        $layout  = str_replace( $search, $replace, $layout );
+        // 3. Remove spaces surrounding major CSS symbols, operators, and selectors.
+        $layout = preg_replace( '~\s*([{}:;,>+~])\s*~', '$1', $layout );
+
+        // 4. Clean up redundant semicolons right before closing brackets (;} -> }).
+        $layout = str_replace( ';}', '}', $layout );
+
+        // 5. Clean up any leftover empty rulesets (e.g., selector{}).
+        $layout = preg_replace( '~[^{}]+\{\}~', '', $layout );
 
         // Return the clean, trimmed CSS layout string.
         return trim( $layout );

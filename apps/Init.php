@@ -25,6 +25,7 @@ use WPNinetyPlus\HtmlCuredExe;
 use WPNinetyPlus\InteractiveInlineExe;
 use WPNinetyPlus\InteractiveMergeExe;
 use WPNinetyPlus\LayoutMergeInlineExe;
+use WPNinetyPlus\WPNinetyPlusSyncInteractive;
 
 /**
  * Class Init
@@ -112,19 +113,20 @@ class Init {
                 $InteractiveMergeExe = new InteractiveMergeExe();
                 $html                = $InteractiveMergeExe->interactive_merge( $html );
             }
-
-            // 4. Layout Merge Pipeline
-            $oclm_enabled = defined( 'OCLM' ) && OCLM;
-            if ( $oclm_enabled ) {
-                $layout_merge = new LayoutMergeExe();
-                $html         = $layout_merge->layout_merge( $html );
-            }
+            
 
             // 5. Layout Merge Inline Pipeline
             $wpnpmi_enabled = defined( 'WPNPMI' ) && WPNPMI;
             if ( $wpnpmi_enabled ) {
                 $layout_merge = new LayoutMergeInlineExe();
                 $html         = $layout_merge->layout_merge_inline( $html );
+            }
+
+            // 4. Layout Merge Pipeline
+            $oclm_enabled = defined( 'OCLM' ) && OCLM;
+            if ( $oclm_enabled ) {
+                $layout_merge = new LayoutMergeExe();
+                $html         = $layout_merge->layout_merge( $html );
             }
 
             // 6. Full Paint Execution Pipeline
@@ -147,6 +149,13 @@ class Init {
                 $sync = new WPNinetyPlusSync();
                 $html = $sync->cured_assets_sync( $html );
             }
+
+            $wpnsi_enabled = defined( 'WPNSI' ) && WPNSI;
+            if ( $wpnsi_enabled ) {
+                 $wpnsi = new WPNinetyPlusSyncInteractive();
+                 $html = $wpnsi->cured_assets_syncinter( $html );
+            }
+
 
             return $html;
         } );

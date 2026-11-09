@@ -62,10 +62,94 @@ class FullPaintExe {
         // 2. Process <video> tags in-place with proper attributes and poster preloads
         $skeleton = $this->process_videos( $skeleton, $ids );
 
-        // 3. Automatically inject skeleton frame loading classes
+        // 3. Automatically inject skeleton frame loading classes using reliable regex
         $skeleton = $this->inject_skeleton_frames( $skeleton );
 
         return $skeleton;
+    }
+
+    /**
+     * Helper method to determine the placeholder fallback source (Hook -> Logo -> Blog Name -> Domain Name).
+     * 
+     * @since 1.3.1
+     * @return array Returns an array with type ('image' or 'text') and value (URL or Brand String).
+     */
+    private function get_media_fallback() : array {
+        /**
+         * Filter to assign a custom image placeholder via hook.
+         * 
+         * @since 1.3.1
+         * @param string|null $placeholder_url Custom image URL or null/empty.
+         */
+        $hook_placeholder = apply_filters( 'wpninetyplus_fullpaint_vm_placeholder', null );
+
+        if ( ! empty( $hook_placeholder ) && filter_var( $hook_placeholder, FILTER_VALIDATE_URL ) ) {
+            return [
+                'type'  => 'image',
+                'value' => esc_url_raw( $hook_placeholder )
+            ];
+        }
+
+        // 1. Check for custom logo alt text
+        $custom_logo_id = get_theme_mod( 'custom-logo' );
+        if ( $custom_logo_id ) {
+            $logo_meta = get_post_meta( $custom_logo_id, '_wp_attachment_image_alt', true );
+            if ( ! empty( $logo_meta ) ) {
+                return [ 'type' => 'text', 'value' => $logo_meta ];
+            }
+        }
+
+        // 2. Check for blog name
+        $blog_name = get_bloginfo( 'name' );
+        if ( ! empty( $blog_name ) ) {
+            return [ 'type' => 'text', 'value' => $blog_name ];
+        }
+
+        // 3. Fallback to clean domain name
+        $domain_name = parse_url( home_url(), PHP_URL_HOST );
+        if ( empty( $domain_name ) ) {
+            $domain_name = preg_replace( '#^https?://#i', '', home_url() );
+        }
+
+        return [ 
+            'type'  => 'text', 
+            'value' => ! empty( $domain_name ) ? $domain_name : 'WPNinetyPlus' 
+        ];
+    }
+
+    /**
+     * Generates the fallback onerror attribute string based on the fallback type.
+     * 
+     * @since 1.3.1
+     * @param string $tag_type 'img' or 'video'
+     * @return string
+     */
+    private function get_onerror_attribute( string $tag_type ) : string {
+        $fallback = $this->get_media_fallback();
+
+        if ( $fallback['type'] === 'image' ) {
+            $fallback_url = $fallback['value'];
+            if ( $tag_type === 'img' ) {
+                return 'onerror="this.onerror=null; this.src=\'' . $fallback_url . '\'; this.style.width=\'250px\'; this.style.height=\'auto\';"';
+            } else {
+                return 'onerror="this.style.display=\'none\'; if(!this.nextElementSibling || !this.nextElementSibling.classList.contains(\'wpninetyplus-video-fallback\')) { var fb = document.createElement(\'img\'); fb.src=\'' . $fallback_url . '\'; fb.className=\'wpninetyplus-video-fallback\'; fb.style.width=\'250px\'; fb.style.height=\'auto\'; this.parentNode.insertBefore(fb, this.nextSibling); }"';
+            }
+        } else {
+            // Text branding fallback via transparent SVG
+            $brand_text = $fallback['value'];
+            $svg_raw = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="150" viewBox="0 0 300 150">'
+                     . '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#555555" font-family="sans-serif" font-size="14" font-weight="bold">'
+                     . esc_html( $brand_text )
+                     . '</text></svg>';
+
+            $fallback_svg = 'data:image/svg+xml;base64,' . base64_encode( $svg_raw );
+
+            if ( $tag_type === 'img' ) {
+                return 'onerror="this.onerror=null; this.src=\'' . $fallback_svg . '\'; this.style.width=\'250px\'; this.style.height=\'auto\';"';
+            } else {
+                return 'onerror="this.style.display=\'none\'; if(!this.nextElementSibling || !this.nextElementSibling.classList.contains(\'wpninetyplus-video-fallback\')) { var fb = document.createElement(\'img\'); fb.src=\'' . $fallback_svg . '\'; fb.className=\'wpninetyplus-video-fallback\'; fb.style.width=\'250px\'; fb.style.height=\'auto\'; this.parentNode.insertBefore(fb, this.nextSibling); }"';
+            }
+        }
     }
 
     /**
@@ -98,14 +182,9 @@ class FullPaintExe {
                 $attributes .= ' decoding="async"';
             }
 
-            // --- ADD AUTOMATIC ERROR FALLBACK ---
             if ( false === stripos( $attributes, 'onerror=' ) ) {
-                // Base64-encoded light gray SVG with "IMG" text (avoids breaking HTML/JS quotes and special characters)
-                $fallback_svg = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiB2aWV3Qm94PSIwIDAgMTUwIDE1MCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNlMGUwZTAiLz48dGV4dCB4PSI1MCUiIHkgPSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM3Nzc3NzciIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0Ij5JTUc8L3RleHQ+PC9zdmc+';
-                
-                $attributes .= ' onerror="this.onerror=null; this.src=\'' . $fallback_svg . '\';"';
+                $attributes .= ' ' . $this->get_onerror_attribute( 'img' );
             }
-            // ------------------------------------
 
             $replacement = '<img ' . trim( $attributes ) . '>';
 
@@ -154,17 +233,13 @@ class FullPaintExe {
                 $attributes .= ' playsinline';
             }
 
-            // --- ADD VIDEO ERROR / POSTER FALLBACK ---
             if ( false === stripos( $attributes, 'onerror=' ) ) {
-                // Base64-encoded light gray SVG with a centered Play Icon
-                $fallback_video_svg = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0idHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2UwZTBlMCIvPjxwb2x5Z29uIHBvaW50cz0iNzUsNjUgMTM1LDEwMCA3NSwxMzUiIGZpbGw9IiM3Nzc3NzciLz48L3N2Zz4=';
-                
-                $attributes .= ' onerror="this.style.display=\'none\'; if(!this.nextElementSibling || !this.nextElementSibling.classList.contains(\'wpninetyplus-video-fallback\')) { var fb = document.createElement(\'img\'); fb.src=\'' . $fallback_video_svg . '\'; fb.className=\'wpninetyplus-video-fallback\'; fb.style.width=\'100%%\'; fb.style.height=\'auto\'; this.parentNode.insertBefore(fb, this.nextSibling); }"';
+                $attributes .= ' ' . $this->get_onerror_attribute( 'video' );
             }
-            // ------------------------------------------
 
             $video_tag = '<video ' . trim( $attributes . ' ' . $content ) . '</video>';
 
+            // Automatically inject a high-priority preload link for the video poster if present
             if ( ! empty( $poster_url ) ) {
                 $preload_tag = '<link rel="preload" href="' . esc_url_raw( $poster_url ) . '" as="image" fetchpriority="high">';
                 return $preload_tag . $video_tag;
@@ -176,8 +251,8 @@ class FullPaintExe {
 
     /**
      * Automatically injects skeleton framework classes:
-     * - Parent tags (header, section, nav, article, aside, footer) get 'wpninetyplus-lframe'
-     * - Child tags get 'wpninetyplus-sk-frame' safely, skipping if already present.
+     * Parent tags (header, section, nav, article, aside, footer) get 'wpninetyplus-lframe'
+     * Child tags get 'wpninetyplus-sk-frame' safely, skipping if already present.
      * 
      * @since 1.3.1
      * @param string $skeleton The HTML string.
@@ -222,7 +297,7 @@ class FullPaintExe {
 
         // Check if a class attribute already exists
         if ( preg_match( '/class\s*=\s*(["\'])(.*?)\1/i', $attributes, $match ) ) {
-            $quote            = $match[1];
+            $quote              = $match[1];
             $existing_classes = $match[2];
             $updated_classes  = trim( $existing_classes . ' ' . $target_class );
             
