@@ -59,6 +59,8 @@ For the Free Version (no GUI), place your configuration in the plugin directory 
 WPNINETYPLUS_MANAGER = true
 
 WPNINETYPLUS_SYNCASSETS = true
+WPNINETYPLUS_SYNCINTERACTIVE = true
+
 WPNINETYPLUS_ISOLATE = true
 WPNINETYPLUS_INIT = false
 
@@ -165,6 +167,69 @@ add_filter( 'wpninetyplus_sync_temporary', function( $selectors ) {
 });
 ```
 </details>
+
+<details>
+<summary><b>WPNINETYPLUS_SYNCINTERACTIVE</b></summary>
+
+### Hooks | WPNINETYPLUS_SYNCINTERACTIVE
+```env
+WPNINETYPLUS_SYNCINTERACTIVE = false
+```
+
+```php
+
+/**
+ * 2. Define Font Preloads
+ * Injects high-priority font preloads right into the <head> block.
+ */
+add_filter( 'wpninetyplus_sync_font_preloads_interactive', function( $preload_block, $theme_uri ) {
+
+// return $block;
+
+}, 10, 2 );
+
+/**
+ * 3. Define Dynamic Loading Timeout Period Logic
+ * Adjusts how long the browser waits after the 'load' event before injecting delayed assets.
+ */
+add_filter( 'wpninetyplus_sync_loading_period_interactive', function( $js_string ) {
+ // return $block;
+});
+
+/**
+ * 4. Define Conditional JavaScript Assets to Load After Timeout
+ */
+add_filter( 'wpninetyplus_sync_assets_conditional_interactive', function( $block, $theme_uri, $version ) {
+
+// return $block;
+
+}, 10, 3 );
+
+/**
+ * 1. Define JS Keywords / Strip
+ */
+add_filter( 'wpninetyplus_sync_assets_interactive', function( $keywords ) {
+    return array(
+        
+        'wp-includes/js/jquery/jquery.min.js'
+        
+    );
+});
+
+/**
+ * 5. Define Selectors to Remove .r-temporary Class From
+ * Helps prevent layout shifts or flashing elements by safely removing temporary visibility classes 
+ * once the deferred JS executes.
+ */
+add_filter( 'wpninetyplus_sync_temporary_interactive', function( $selectors ) {
+    return array(
+        '#id_gallery',
+    );
+});
+
+```
+</details>
+
 
 <details>
 <summary><b>OPTIMIZED_CLIENT_LMERGE</b></summary>
