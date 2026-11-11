@@ -85,6 +85,24 @@ WPNINETYPLUS_LAYMERGEINLINE = true
 
 ## 🧩 Hook Documentation
 
+
+<details>
+<summary><b>WPNINETYPLUS_FULLPAINT</b></summary>
+
+### Hooks | FULLPAINT
+```env
+WPNINETYPLUS_FULLPAINT = false
+```
+
+```php
+
+add_filter( 'wpninetyplus_fullpaint_vm_placeholder', function( $placeholder ) {
+    return 'https://domain.com/wp-content/uploads/logo-placeholder.png';
+});
+
+```
+</details>
+
 <details>
 <summary><b>WPNINETYPLUS_MANAGER</b></summary>
 
